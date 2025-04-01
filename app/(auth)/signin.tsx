@@ -6,8 +6,8 @@ import { Colors } from '@/constants/Colors'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useSignIn } from '@clerk/clerk-expo'
 import { BlurTint, BlurView } from 'expo-blur'
-import { useRouter } from 'expo-router'
-import { useState } from 'react'
+import { useNavigation, useRouter } from 'expo-router'
+import { useEffect, useState } from 'react'
 import {
 	Platform,
 	PlatformColor,
@@ -15,6 +15,7 @@ import {
 	View,
 	Text,
 	Alert,
+	ActivityIndicator
 } from 'react-native'
 
 export default function SignInScreen() {
@@ -34,13 +35,7 @@ export default function SignInScreen() {
 			display: 'flex',
 			flexDirection: 'column',
 			alignItems: 'center',
-			gap: 20,
-		},
-		blurView: {
-			display: 'flex',
-			flexDirection: 'column',
-			justifyContent: 'center',
-			alignItems: 'center',
+			gap: 20
 		},
 		formContainer: {
 			backgroundColor: Colors[currentTheme as keyof typeof Colors].panel,
@@ -50,19 +45,19 @@ export default function SignInScreen() {
 			borderRadius: 10,
 			paddingVertical: 30,
 			paddingHorizontal: 20,
-			width: '80%',
+			width: '100%',
 			display: 'flex',
 			flexDirection: 'column',
 			justifyContent: 'center',
-			gap: 20,
-		},
+			gap: 20
+		}
 	})
 
 	const [userValues, setUserValues] = useState<{
 		[key: string]: string | undefined
 	}>({
 		email: undefined,
-		password: undefined,
+		password: undefined
 	})
 
 	const { signIn, setActive, isLoaded } = useSignIn()
@@ -72,7 +67,7 @@ export default function SignInScreen() {
 	const handleInputChange = (value: string, key: string) => {
 		setUserValues((prev) => ({
 			...prev,
-			[key]: value,
+			[key]: value
 		}))
 	}
 
@@ -91,7 +86,7 @@ export default function SignInScreen() {
 		try {
 			const signInAttempt = await signIn.create({
 				identifier: userValues.email,
-				password: userValues.password,
+				password: userValues.password
 			})
 
 			if (signInAttempt.status === 'complete') {
@@ -114,14 +109,53 @@ export default function SignInScreen() {
 		}
 	}
 
+	const nav = useNavigation()
+
+	if (Platform.OS === 'android') {
+		const [loadingScreen, setloadingScreen] = useState(true)
+
+		useEffect(() => {
+			setTimeout(() => {
+				setloadingScreen((prev) => !prev)
+				nav.setOptions({
+					headerShown: true,
+					headerTitle: 'Sign In'
+				})
+			}, 2000)
+		}, [])
+
+		if (loadingScreen) {
+			return (
+				<Div
+					style={{
+						justifyContent: 'center',
+						alignItems: 'center',
+						flex: 1
+					}}>
+					<ActivityIndicator size='large' />
+				</Div>
+			)
+		}
+	}
+
+	useEffect(() => {
+		nav.setOptions({
+			headerShown: true,
+			headerTitle: 'Sign In'
+		})
+	}, [])
+
 	return (
 		<BackgroundElement backgroundColor={backgroundColor}>
-			<Div style={styles.mainContainer}>
-				<BlurView
-					tint={`${currentTheme}`}
-					experimentalBlurMethod='dimezisBlurView'
-					intensity={50}
-					style={[StyleSheet.absoluteFill, styles.blurView]}>
+			<BlurView
+				intensity={50}
+				experimentalBlurMethod='dimezisBlurView'
+				style={{
+					...StyleSheet.absoluteFillObject,
+					overflow: 'hidden',
+					backgroundColor: 'transparent'
+				}}>
+				<Div style={styles.mainContainer}>
 					<View style={styles.formContainer}>
 						<Input
 							placeholder='Email'
@@ -163,8 +197,9 @@ export default function SignInScreen() {
 							onPress={() => router.push('/signup')}
 						/>
 					</View>
-				</BlurView>
-			</Div>
+				</Div>
+				{/* </BackgroundElement> */}
+			</BlurView>
 		</BackgroundElement>
 	)
 }

@@ -11,7 +11,7 @@ interface BackgroundElementProps {
 
 const BackgroundElement: React.FC<BackgroundElementProps> = ({
 	backgroundColor,
-	children,
+	children
 }) => {
 	const { currentTheme } = useTheme()
 
@@ -29,7 +29,7 @@ const BackgroundElement: React.FC<BackgroundElementProps> = ({
 			top: -250,
 			right: -300,
 			width: width * 2,
-			height: width * 2.2,
+			height: width * 2.2
 		},
 		svg: {
 			position: 'absolute',
@@ -42,12 +42,12 @@ const BackgroundElement: React.FC<BackgroundElementProps> = ({
 			shadowColor: Colors.backgroundElement[opt].borderColor,
 			shadowOffset: {
 				width: 0,
-				height: 0,
+				height: 0
 			},
 			shadowOpacity: 0.98,
 			shadowRadius: -2,
-			overflow: 'hidden',
-		},
+			overflow: 'hidden'
+		}
 	})
 
 	return (
@@ -56,7 +56,7 @@ const BackgroundElement: React.FC<BackgroundElementProps> = ({
 				backgroundColor,
 				flex: 1,
 				overflow: 'hidden',
-				position: 'relative',
+				position: 'relative'
 			}}>
 			{Platform.OS === 'ios' ? (
 				<Svg

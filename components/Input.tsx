@@ -10,7 +10,7 @@ import {
 	TextInput,
 	TextInputProps as RNTextInputProps,
 	View,
-	TouchableOpacity,
+	TouchableOpacity
 } from 'react-native'
 import { Colors } from '@/constants/Colors'
 import Ionicons from '@expo/vector-icons/Ionicons'
@@ -66,14 +66,14 @@ const Input: React.FC<InputProps> = ({
 	> = {
 		sm: { fontSize: 16, padding: 8 },
 		md: { height: 25, fontSize: 20, padding: 14 },
-		lg: { height: 55, fontSize: 32, padding: 16 },
+		lg: { height: 55, fontSize: 32, padding: 16 }
 	}
 
 	const getVariantStyle = () => {
 		switch (variant) {
 			case 'default':
 				return {
-					borderWidth: 1,
+					borderWidth: 1
 				}
 			case 'outlined':
 				return {
@@ -81,7 +81,7 @@ const Input: React.FC<InputProps> = ({
 					borderRadius: 10,
 					borderColor:
 						Colors[useContrastColors ? contrastTheme : currentTheme]
-							.border,
+							.border
 				}
 			case 'clean':
 				return {
@@ -89,7 +89,7 @@ const Input: React.FC<InputProps> = ({
 					borderBottomWidth: 1,
 					borderBottomColor:
 						Colors[useContrastColors ? contrastTheme : currentTheme]
-							.border,
+							.border
 				}
 		}
 	}
@@ -110,15 +110,15 @@ const Input: React.FC<InputProps> = ({
 		InputContainer: {
 			marginBottom: 16,
 			width: width as DimensionValue,
-			position: 'relative',
+			position: 'relative'
 		},
 		error: {
 			color: Platform.OS === 'ios' ? PlatformColor('systemRed') : 'red',
-			marginTop: 4,
+			marginTop: 4
 		},
 		disabled: {
-			opacity: 0.5,
-		},
+			opacity: 0.5
+		}
 	})
 
 	const [showPassword, setShowPassword] = useState(false)
@@ -136,8 +136,9 @@ const Input: React.FC<InputProps> = ({
 						flexDirection: 'row',
 						justifyContent: 'space-between',
 						alignItems: 'center',
+						paddingVertical: 5
 					},
-					disabled && styles.disabled,
+					disabled && styles.disabled
 				]}>
 				<TextInput
 					style={[
@@ -149,9 +150,9 @@ const Input: React.FC<InputProps> = ({
 									? 0
 									: sizeStyles[size].padding,
 							color: getTextColor(),
-							width: '90%',
+							width: '90%'
 						},
-						inputStyle,
+						inputStyle
 					]}
 					onChangeText={onValueChange}
 					onFocus={() => setIsFocused(true)}

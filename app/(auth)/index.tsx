@@ -1,10 +1,11 @@
 import { Button } from '@/components/Button'
 import { Div } from '@/components/DynamicInterfaceView'
+import { Text } from '@/components/ThemedText'
 import { BackgroundElement } from '@/components/ui/BackgroundElement'
 import { Colors } from '@/constants/Colors'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useRouter } from 'expo-router'
-import { Platform, PlatformColor, StyleSheet, View, Text } from 'react-native'
+import { Platform, PlatformColor, StyleSheet, View } from 'react-native'
 
 export default function WelcomeScreen() {
 	const router = useRouter()
@@ -22,17 +23,17 @@ export default function WelcomeScreen() {
 			display: 'flex',
 			justifyContent: 'center',
 			alignItems: 'center',
-			gap: 20,
+			gap: 20
 		},
 		text: {
-			color: Colors[currentTheme as keyof typeof Colors].text,
+			color: Colors[currentTheme as keyof typeof Colors].text
 		},
 		title: {
 			fontSize: Platform.OS === 'ios' ? 70 : 65,
-			textAlign: 'center',
+			textAlign: 'center'
 		},
 		appName: {
-			fontWeight: 'bold',
+			fontWeight: 'bold'
 		},
 		btnsContainer: {
 			marginTop: 250,
@@ -40,15 +41,18 @@ export default function WelcomeScreen() {
 			flexDirection: 'column',
 			justifyContent: 'center',
 			alignItems: 'center',
-			gap: 20,
-		},
+			gap: 20
+		}
 	})
 
 	return (
 		<BackgroundElement backgroundColor={backgroundColor}>
 			<Div style={styles.mainContainer}>
 				<Text style={[styles.title, styles.text]}>
-					Welcome to <Text style={styles.appName}>iGrocery</Text>
+					Welcome to{' '}
+					<Text style={[styles.title, styles.text, styles.appName]}>
+						iGrocery
+					</Text>
 				</Text>
 				<View style={styles.btnsContainer}>
 					<Button

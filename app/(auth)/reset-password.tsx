@@ -5,18 +5,21 @@ import { BackgroundElement } from '@/components/ui/BackgroundElement'
 import { Colors } from '@/constants/Colors'
 import { useTheme } from '@/contexts/ThemeContext'
 import { BlurView } from 'expo-blur'
-import { Stack } from 'expo-router'
-import React, { useState } from 'react'
+import { useNavigation, useRouter } from 'expo-router'
+import React, { useEffect, useState } from 'react'
 import {
+	ActivityIndicator,
+	Alert,
 	Platform,
 	PlatformColor,
-	processColor,
 	StyleSheet,
-	View,
+	View
 } from 'react-native'
 
 export default function ResetPasswordScreen() {
 	const { currentTheme } = useTheme()
+
+	const router = useRouter()
 
 	const backgroundColor =
 		Platform.OS === 'ios'
@@ -30,13 +33,7 @@ export default function ResetPasswordScreen() {
 			display: 'flex',
 			flexDirection: 'column',
 			alignItems: 'center',
-			gap: 20,
-		},
-		blurView: {
-			display: 'flex',
-			flexDirection: 'column',
-			justifyContent: 'center',
-			alignItems: 'center',
+			gap: 20
 		},
 		formContainer: {
 			backgroundColor: Colors[currentTheme as keyof typeof Colors].panel,
@@ -46,74 +43,108 @@ export default function ResetPasswordScreen() {
 			borderRadius: 10,
 			paddingVertical: 30,
 			paddingHorizontal: 20,
-			width: '80%',
+			width: '100%',
 			display: 'flex',
 			flexDirection: 'column',
 			justifyContent: 'center',
-			gap: 20,
-		},
+			gap: 20
+		}
 	})
+
+	const nav = useNavigation()
+
+	if (Platform.OS === 'android') {
+		const [loadingScreen, setloadingScreen] = useState(true)
+
+		useEffect(() => {
+			setTimeout(() => {
+				setloadingScreen((prev) => !prev)
+				nav.setOptions({
+					headerShown: true,
+					headerTitle: 'Reset Password'
+				})
+			}, 2000)
+		}, [])
+
+		if (loadingScreen) {
+			return (
+				<Div
+					style={{
+						justifyContent: 'center',
+						alignItems: 'center',
+						flex: 1
+					}}>
+					<ActivityIndicator size='large' />
+				</Div>
+			)
+		}
+	}
+
+	useEffect(() => {
+		nav.setOptions({
+			headerShown: true,
+			headerTitle: 'Reset Password'
+		})
+	}, [nav])
+
+	const [loading, setLoading] = useState(false)
 
 	const [email, setEmail] = useState('')
 
+	const [emailIsValid, setEmailIsValid] = useState(false)
+
+	const handleSubmit = () => {
+		setLoading((prev) => !prev)
+
+		if (!email) {
+			setLoading((prev) => !prev)
+			Alert.alert('Please enter your email address')
+			return
+		}
+
+		if (email.includes('@') && email.includes('.com')) {
+			setEmailIsValid((prev) => !prev)
+		} else {
+			Alert.alert('Email is invalid. Please try again.')
+			setLoading((prev) => !prev)
+			return
+		}
+
+		if (emailIsValid) {
+			// Do stuff
+		}
+	}
+
 	return (
-		<>
-			<Stack.Screen
-				options={{
-					title: 'Reset Password',
-					headerLargeTitle: true,
-					headerTransparent: true,
-					headerBackground: () => (
-						<BlurView
-							tint={`${currentTheme}`}
-							experimentalBlurMethod='dimezisBlurView'
-							intensity={50}
-							style={StyleSheet.absoluteFill}
-						/>
-					),
-					headerLargeTitleShadowVisible: false,
-					headerShadowVisible: true,
-					headerLargeStyle: {
-						backgroundColor: 'transparent',
-					},
-					headerTitleStyle: {
-						color:
-							Platform.OS === 'ios'
-								? String(processColor(PlatformColor('label')))
-								: Colors[currentTheme].text,
-					},
-					headerBackButtonDisplayMode: 'minimal',
-					headerTintColor:
-						Platform.OS === 'ios'
-							? (processColor(
-									PlatformColor('label')
-								) as unknown as string)
-							: Colors[currentTheme].text,
-				}}
-			/>
-			<BackgroundElement backgroundColor={backgroundColor}>
+		<BackgroundElement backgroundColor={backgroundColor}>
+			<BlurView
+				intensity={50}
+				experimentalBlurMethod='dimezisBlurView'
+				style={{
+					...StyleSheet.absoluteFillObject,
+					overflow: 'hidden',
+					backgroundColor: 'transparent'
+				}}>
 				<Div style={styles.mainContainer}>
-					<BlurView
-						tint={`${currentTheme}`}
-						experimentalBlurMethod='dimezisBlurView'
-						intensity={50}
-						style={[StyleSheet.absoluteFill, styles.blurView]}>
-						<View style={styles.formContainer}>
-							<Input
-								placeholder='Email'
-								variant='clean'
-								onValueChange={(value) => setEmail(value)}
-								value={email}
-							/>
-							<Button
-								variant='filled'
-								title='Reset password'
-								// onPress={handleSubmit}
-							/>
-						</View>
-					</BlurView>
+					<View style={styles.formContainer}>
+						<Input
+							placeholder='Email'
+							variant='clean'
+							loading={loading}
+							onValueChange={(value) => setEmail(value)}
+							value={email}
+						/>
+
+						<Button
+							variant='filled'
+							title='Submit'
+							loading={loading}
+							disabled={!emailIsValid || loading}
+							onPress={handleSubmit}
+						/>
+					</View>
 				</Div>
-			</BackgroundElement>
-		</>
+			</BlurView>
+		</BackgroundElement>
 	)
 }
