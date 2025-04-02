@@ -10,15 +10,15 @@ export default function MainLayout() {
 			screenOptions={{
 				tabBarBackground: () => (
 					<BlurView
-						tint={
-							Platform.OS === 'ios'
-								? 'systemChromeMaterial'
-								: (currentTheme as any)
-						}
-						intensity={100}
-						style={StyleSheet.absoluteFill}
+						intensity={50}
+						experimentalBlurMethod='dimezisBlurView'
+						style={{
+							...StyleSheet.absoluteFillObject,
+							overflow: 'hidden',
+							backgroundColor: 'transparent'
+						}}
 					/>
-				),
+				)
 			}}>
 			<Tabs.Screen name='index' />
 			<Tabs.Screen name='settings' />

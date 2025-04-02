@@ -1,11 +1,12 @@
 import { Button } from '@/components/Button'
 import { Div } from '@/components/DynamicInterfaceView'
 import { Input } from '@/components/Input'
+import { Text } from '@/components/ThemedText'
 import { BackgroundElement } from '@/components/ui/BackgroundElement'
 import { Colors } from '@/constants/Colors'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useSignIn } from '@clerk/clerk-expo'
-import { BlurTint, BlurView } from 'expo-blur'
+import { BlurView } from 'expo-blur'
 import { useNavigation, useRouter } from 'expo-router'
 import { useEffect, useState } from 'react'
 import {
@@ -13,7 +14,6 @@ import {
 	PlatformColor,
 	StyleSheet,
 	View,
-	Text,
 	Alert,
 	ActivityIndicator
 } from 'react-native'
@@ -37,6 +37,16 @@ export default function SignInScreen() {
 			alignItems: 'center',
 			gap: 20
 		},
+		text: {
+			color: Colors[currentTheme as keyof typeof Colors].text
+		},
+		title: {
+			fontSize: Platform.OS === 'ios' ? 70 : 65,
+			textAlign: 'center'
+		},
+		appName: {
+			fontWeight: 'bold'
+		},
 		formContainer: {
 			backgroundColor: Colors[currentTheme as keyof typeof Colors].panel,
 			borderWidth: 1,
@@ -50,15 +60,85 @@ export default function SignInScreen() {
 			flexDirection: 'column',
 			justifyContent: 'center',
 			gap: 20
+		},
+		errorsContainer: {
+			width: 'auto',
+			borderRadius: 10,
+			padding: 20,
+			backgroundColor:
+				Platform.OS === 'ios'
+					? PlatformColor('systemRed')
+					: Colors.danger
+		},
+		errors: {
+			fontWeight: 'semibold',
+			fontSize: 20
 		}
 	})
 
+	const nav = useNavigation()
+	const [loadingScreen, setloadingScreen] = useState(true)
+
+	useEffect(() => {
+		nav.setOptions({
+			headerShown: true,
+			headerTitle: 'Sign Up'
+		})
+
+		if (Platform.OS === 'android') {
+			const timeout = setTimeout(() => {
+				setloadingScreen(false)
+				nav.setOptions({
+					headerShown: true,
+					headerTitle: 'Sign Up'
+				})
+			}, 2000)
+
+			return () => clearTimeout(timeout)
+		}
+	}, [])
+
+	if (Platform.OS === 'android' && loadingScreen) {
+		return (
+			<Div
+				style={{
+					justifyContent: 'center',
+					alignItems: 'center',
+					flex: 1
+				}}>
+				<ActivityIndicator size='large' />
+			</Div>
+		)
+	}
+
 	const [userValues, setUserValues] = useState<{
-		[key: string]: string | undefined
+		[key: string]: string
 	}>({
-		email: undefined,
-		password: undefined
+		email: '',
+		password: ''
 	})
+
+	const [errorMsg, setErrorMessage] = useState<string>('')
+
+	const [errors, setErrors] = useState<{ [key: string]: boolean }>({
+		email: false,
+		password: false
+	})
+
+	const validationPatterns: { [key: string]: RegExp } = {
+		email: /^[\w-.]+@([\w-]+\.)+[\w-]{2,}$/, // Check if email address is in valid forma (E.g.: example@email.com)
+		password: /^(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/ // Check if password is at least 8 characaters long with at least 1 lowercase letter, 1 number and 1 symbol
+	}
+
+	const [emailIsValid, setEmailIsValid] = useState<boolean>(false)
+	const [passwordIsValid, setPasswordIsValid] = useState<boolean>(false)
+
+	useEffect(() => {
+		setEmailIsValid(validationPatterns.email.test(userValues.email))
+		setPasswordIsValid(
+			validationPatterns.password.test(userValues.password)
+		)
+	}, [userValues.email, userValues.password])
 
 	const { signIn, setActive, isLoaded } = useSignIn()
 
@@ -69,19 +149,66 @@ export default function SignInScreen() {
 			...prev,
 			[key]: value
 		}))
+
+		setErrors((prev) => ({
+			...prev,
+			[key]: value.trim() === ''
+		}))
+	}
+
+	const resetErrors = () => {
+		setErrors({
+			email: false,
+			password: false
+		})
 	}
 
 	const handleSubmit = async () => {
+		setLoading(true)
+
+		resetErrors()
+
 		if (!isLoaded) {
+			setLoading(false)
 			return
 		}
 
 		if (!userValues.email || !userValues.password) {
-			Alert.alert('Please fill in all fields')
+			setErrors((prev) => ({
+				...prev,
+				email: userValues.email.trim() === '',
+				password: userValues.password.trim() === ''
+			}))
+			setErrorMessage('Please fill in all fields')
+			Alert.alert(errorMsg)
+			console.log(errorMsg)
+			setLoading(false)
 			return
 		}
 
-		setLoading((prev) => !prev)
+		if (!emailIsValid) {
+			setErrors((prev) => ({
+				...prev,
+				email: true
+			}))
+			setErrorMessage('Email address is not valid. Please try again')
+			Alert.alert(errorMsg)
+			console.error(errorMsg)
+			setLoading(false)
+			return
+		}
+
+		if (!passwordIsValid) {
+			setErrors((prev) => ({
+				...prev,
+				password: true
+			}))
+			setErrorMessage('Password is not valid. Please try again')
+			Alert.alert(errorMsg)
+			console.error(errorMsg)
+			setLoading(false)
+			return
+		}
 
 		try {
 			const signInAttempt = await signIn.create({
@@ -93,57 +220,33 @@ export default function SignInScreen() {
 				await setActive({ session: signInAttempt.createdSessionId })
 				router.replace('/')
 			} else {
-				// If the status isn't complete, check why. User might need to
-				// complete further steps.
 				Alert.alert('An error occurred. Please try again')
-				console.error(
-					'An error occurred. Please try again' +
-						JSON.stringify(signInAttempt, null, 2)
-				)
+				console.error(signInAttempt)
 			}
-		} catch (e) {
-			Alert.alert('An error occurred')
-			console.error('An error occurred' + JSON.stringify(e, null, 2))
+		} catch (e: any) {
+			const errorParamName = e.errors
+				.map((err: any) => err.meta.paramName)
+				.join('')
+
+			setErrors((prev) => ({
+				...prev,
+				[errorParamName]: true
+			}))
+
+			setErrorMessage((prev) => {
+				let newMsg = prev
+				newMsg =
+					'An error occurred' +
+					'\n' +
+					e.errors.map((err: any) => err.longMessage).join('\n')
+				return newMsg
+			})
+			Alert.alert(errorMsg)
+			console.error(JSON.stringify(e, null, 2))
 		} finally {
-			setLoading((prev) => !prev)
+			setLoading(false)
 		}
 	}
-
-	const nav = useNavigation()
-
-	if (Platform.OS === 'android') {
-		const [loadingScreen, setloadingScreen] = useState(true)
-
-		useEffect(() => {
-			setTimeout(() => {
-				setloadingScreen((prev) => !prev)
-				nav.setOptions({
-					headerShown: true,
-					headerTitle: 'Sign In'
-				})
-			}, 2000)
-		}, [])
-
-		if (loadingScreen) {
-			return (
-				<Div
-					style={{
-						justifyContent: 'center',
-						alignItems: 'center',
-						flex: 1
-					}}>
-					<ActivityIndicator size='large' />
-				</Div>
-			)
-		}
-	}
-
-	useEffect(() => {
-		nav.setOptions({
-			headerShown: true,
-			headerTitle: 'Sign In'
-		})
-	}, [])
 
 	return (
 		<BackgroundElement backgroundColor={backgroundColor}>
@@ -197,8 +300,12 @@ export default function SignInScreen() {
 							onPress={() => router.push('/signup')}
 						/>
 					</View>
+					{Object.values(errors).some((value) => value === true) && (
+						<View style={styles.errorsContainer}>
+							<Text style={styles.errors}>{errorMsg}</Text>
+						</View>
+					)}
 				</Div>
-				{/* </BackgroundElement> */}
 			</BlurView>
 		</BackgroundElement>
 	)

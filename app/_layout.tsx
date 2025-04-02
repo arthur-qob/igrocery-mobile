@@ -6,14 +6,14 @@ import { StatusBar } from 'expo-status-bar'
 import { useEffect } from 'react'
 import 'react-native-reanimated'
 import { ClerkProvider } from '@clerk/clerk-expo'
-import { tokenCache } from '@clerk/clerk-expo/token-cache'
+import { tokenCache } from '@/cache'
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync()
 
 export default function RootLayout() {
 	const [loaded] = useFonts({
-		SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+		SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf')
 	})
 
 	useEffect(() => {

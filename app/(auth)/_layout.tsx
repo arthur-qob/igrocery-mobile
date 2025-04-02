@@ -1,30 +1,21 @@
-import { BackgroundElement } from '@/components/ui/BackgroundElement'
 import { Colors } from '@/constants/Colors'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useAuth } from '@clerk/clerk-expo'
-import { BlurTint, BlurView } from 'expo-blur'
 import { Redirect, Stack } from 'expo-router'
-import {
-	Platform,
-	PlatformColor,
-	processColor,
-	StyleSheet,
-	View
-} from 'react-native'
+import { Platform, PlatformColor, processColor, View } from 'react-native'
 
 export default function AuthLayout() {
 	const { currentTheme } = useTheme()
 
-	const { isSignedIn } = useAuth()
+	const { isLoaded, isSignedIn } = useAuth()
+
+	if (!isLoaded) {
+		return null
+	}
 
 	if (isSignedIn) {
 		return <Redirect href={'/'} />
 	}
-
-	const backgroundColor =
-		Platform.OS === 'ios'
-			? PlatformColor('systemBackground')
-			: Colors[currentTheme as keyof typeof Colors].background
 
 	return (
 		<Stack

@@ -29,6 +29,7 @@ interface InputProps extends Omit<RNTextInputProps, 'style'> {
 	width?: number | string
 	disabled?: boolean
 	loading?: boolean
+	withErrors?: boolean
 	onValueChange?: (param?: any) => any
 	value?: string
 	children?: React.ReactNode
@@ -47,6 +48,7 @@ const Input: React.FC<InputProps> = ({
 	containerStyle,
 	disabled = false,
 	loading = false,
+	withErrors,
 	onValueChange,
 	value,
 	children,
@@ -73,23 +75,31 @@ const Input: React.FC<InputProps> = ({
 		switch (variant) {
 			case 'default':
 				return {
-					borderWidth: 1
+					borderWidth: withErrors ? 2 : 1
 				}
 			case 'outlined':
 				return {
-					borderWidth: 1,
+					borderWidth: withErrors ? 2 : 1,
 					borderRadius: 10,
-					borderColor:
-						Colors[useContrastColors ? contrastTheme : currentTheme]
-							.border
+					borderColor: withErrors
+						? Platform.OS === 'ios'
+							? PlatformColor('systemRed')
+							: Colors.danger
+						: Colors[
+								useContrastColors ? contrastTheme : currentTheme
+							].border
 				}
 			case 'clean':
 				return {
 					backgroundColor: 'transparent',
-					borderBottomWidth: 1,
-					borderBottomColor:
-						Colors[useContrastColors ? contrastTheme : currentTheme]
-							.border
+					borderBottomWidth: withErrors ? 2 : 1,
+					borderBottomColor: withErrors
+						? Platform.OS === 'ios'
+							? PlatformColor('systemRed')
+							: Colors.danger
+						: Colors[
+								useContrastColors ? contrastTheme : currentTheme
+							].border
 				}
 		}
 	}
@@ -160,11 +170,15 @@ const Input: React.FC<InputProps> = ({
 					value={value}
 					placeholder={placeholder}
 					placeholderTextColor={
-						isFocused
+						withErrors
 							? Platform.OS === 'ios'
-								? PlatformColor('systemGray3')
-								: 'gray'
-							: getTextColor()
+								? PlatformColor('systemRed')
+								: Colors.danger
+							: isFocused
+								? Platform.OS === 'ios'
+									? PlatformColor('systemGray3')
+									: 'gray'
+								: getTextColor()
 					}
 					editable={!disabled}
 					secureTextEntry={type === 'password' && !showPassword}
@@ -181,12 +195,18 @@ const Input: React.FC<InputProps> = ({
 						{Platform.OS === 'ios' ? (
 							<SymbolView
 								name={showPassword ? 'eye' : 'eye.slash'}
-								tintColor={getTextColor()}
+								tintColor={
+									withErrors
+										? PlatformColor('systemRed')
+										: getTextColor()
+								}
 							/>
 						) : (
 							<Ionicons
 								name={showPassword ? 'eye' : 'eye-off'}
-								color={getTextColor()}
+								color={
+									withErrors ? Colors.danger : getTextColor()
+								}
 								size={24}
 							/>
 						)}
