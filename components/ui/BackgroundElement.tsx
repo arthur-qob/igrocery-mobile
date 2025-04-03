@@ -1,16 +1,25 @@
 import { Colors } from '@/constants/Colors'
 import { useTheme } from '@/contexts/ThemeContext'
 import { Children } from 'react'
-import { Platform, Image, Dimensions, StyleSheet, View } from 'react-native'
+import {
+	Platform,
+	Image,
+	Dimensions,
+	StyleSheet,
+	View,
+	ViewStyle
+} from 'react-native'
 import Svg, { Defs, RadialGradient, Stop, Rect } from 'react-native-svg'
 
 interface BackgroundElementProps {
 	backgroundColor?: string
+	style?: ViewStyle
 	children?: React.ReactNode
 }
 
 const BackgroundElement: React.FC<BackgroundElementProps> = ({
 	backgroundColor,
+	style,
 	children
 }) => {
 	const { currentTheme } = useTheme()
@@ -54,9 +63,11 @@ const BackgroundElement: React.FC<BackgroundElementProps> = ({
 		<View
 			style={{
 				backgroundColor,
+				position: 'absolute',
 				flex: 1,
+				inset: 0,
 				overflow: 'hidden',
-				position: 'relative'
+				...style
 			}}>
 			{Platform.OS === 'ios' ? (
 				<Svg

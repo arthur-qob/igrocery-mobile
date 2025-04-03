@@ -5,7 +5,7 @@ import { Text } from '@/components/ThemedText'
 import { BackgroundElement } from '@/components/ui/BackgroundElement'
 import { Colors } from '@/constants/Colors'
 import { useTheme } from '@/contexts/ThemeContext'
-import { useSignUp } from '@clerk/clerk-expo'
+import { useAuth, useClerk, useSignUp } from '@clerk/clerk-expo'
 import { BlurView } from 'expo-blur'
 import { useNavigation, useRouter } from 'expo-router'
 import { useEffect, useRef, useState } from 'react'
@@ -99,7 +99,7 @@ export default function SignUpScreen() {
 
 		if (Platform.OS === 'android') {
 			const timeout = setTimeout(() => {
-				setloadingScreen((prev) => !prev)
+				setloadingScreen(false)
 				nav.setOptions({
 					headerShown: true,
 					headerTitle: 'Sign Up'
@@ -197,7 +197,9 @@ export default function SignUpScreen() {
 		})
 	}
 
+	const { isSignedIn } = useAuth()
 	const { signUp, setActive, isLoaded } = useSignUp()
+	const { signOut } = useClerk()
 
 	const [pendingVerification, setPendingVerification] = useState(false)
 
@@ -277,10 +279,17 @@ export default function SignUpScreen() {
 					signUpAttempt.status === 'complete' &&
 					signUpAttempt.createdSessionId
 				) {
-					await setActive({ session: signUpAttempt.createdSessionId })
-					setTimeout(() => {
-						router.replace('/signin')
-					}, 2000)
+					console.log(isSignedIn)
+					await signOut()
+					console.log(isSignedIn)
+					router.replace('/(auth)')
+					router.push({
+						pathname: '/signin',
+						params: {
+							emailAddress: userValues.emailAddress,
+							password: userValues.password
+						}
+					})
 				} else {
 					setErrorMessage(
 						'Sign Up Attempt Failed\n For more information, check the terminal'
@@ -547,6 +556,7 @@ export default function SignUpScreen() {
 
 							<Input
 								placeholder='Email'
+								type='email'
 								variant='clean'
 								loading={loading}
 								withErrors={errors.emailAddress}

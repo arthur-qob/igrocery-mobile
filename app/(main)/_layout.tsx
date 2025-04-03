@@ -1,27 +1,33 @@
 import { Tabs } from 'expo-router'
 import { BlurView } from 'expo-blur'
-import { Platform, StyleSheet } from 'react-native'
+import { Platform, PlatformColor, processColor, StyleSheet } from 'react-native'
 import { useTheme } from '@/contexts/ThemeContext'
+import TabBar from '@/components/ui/TabBar'
+import { Colors } from '@/constants/Colors'
+import TabBarHeader from '@/components/ui/TabBarHeader'
 
 export default function MainLayout() {
 	const { currentTheme } = useTheme()
+
 	return (
 		<Tabs
+			tabBar={(props) => <TabBar {...props} />}
 			screenOptions={{
-				tabBarBackground: () => (
-					<BlurView
-						intensity={50}
-						experimentalBlurMethod='dimezisBlurView'
-						style={{
-							...StyleSheet.absoluteFillObject,
-							overflow: 'hidden',
-							backgroundColor: 'transparent'
-						}}
-					/>
-				)
+				header: (props) => <TabBarHeader {...props} />,
+				headerShown: true
 			}}>
-			<Tabs.Screen name='index' />
-			<Tabs.Screen name='settings' />
+			<Tabs.Screen
+				name='index'
+				options={{
+					title: 'Home'
+				}}
+			/>
+			<Tabs.Screen
+				name='settings'
+				options={{
+					title: 'Settings'
+				}}
+			/>
 		</Tabs>
 	)
 }

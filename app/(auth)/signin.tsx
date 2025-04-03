@@ -7,7 +7,7 @@ import { Colors } from '@/constants/Colors'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useSignIn } from '@clerk/clerk-expo'
 import { BlurView } from 'expo-blur'
-import { useNavigation, useRouter } from 'expo-router'
+import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router'
 import { useEffect, useState } from 'react'
 import {
 	Platform,
@@ -82,7 +82,7 @@ export default function SignInScreen() {
 	useEffect(() => {
 		nav.setOptions({
 			headerShown: true,
-			headerTitle: 'Sign Up'
+			headerTitle: 'Sign In'
 		})
 
 		if (Platform.OS === 'android') {
@@ -114,14 +114,14 @@ export default function SignInScreen() {
 	const [userValues, setUserValues] = useState<{
 		[key: string]: string
 	}>({
-		email: '',
-		password: ''
+		emailAddress: (useLocalSearchParams().emailAddress as string) || '',
+		password: (useLocalSearchParams().password as string) || ''
 	})
 
 	const [errorMsg, setErrorMessage] = useState<string>('')
 
 	const [errors, setErrors] = useState<{ [key: string]: boolean }>({
-		email: false,
+		emailAddress: false,
 		password: false
 	})
 
@@ -134,10 +134,13 @@ export default function SignInScreen() {
 	const [passwordIsValid, setPasswordIsValid] = useState<boolean>(false)
 
 	useEffect(() => {
-		setEmailIsValid(validationPatterns.email.test(userValues.email))
-		setPasswordIsValid(
-			validationPatterns.password.test(userValues.password)
+		setEmailIsValid(
+			validationPatterns.email.test(userValues.emailAddress as string)
 		)
+		setPasswordIsValid(
+			validationPatterns.password.test(userValues.password as string)
+		)
+		console.log('entrou')
 	}, [userValues.email, userValues.password])
 
 	const { signIn, setActive, isLoaded } = useSignIn()
@@ -158,7 +161,7 @@ export default function SignInScreen() {
 
 	const resetErrors = () => {
 		setErrors({
-			email: false,
+			emailAddress: false,
 			password: false
 		})
 	}
@@ -173,10 +176,10 @@ export default function SignInScreen() {
 			return
 		}
 
-		if (!userValues.email || !userValues.password) {
+		if (!userValues.emailAddress || !userValues.password) {
 			setErrors((prev) => ({
 				...prev,
-				email: userValues.email.trim() === '',
+				email: userValues.emailAddress.trim() === '',
 				password: userValues.password.trim() === ''
 			}))
 			setErrorMessage('Please fill in all fields')
@@ -189,7 +192,7 @@ export default function SignInScreen() {
 		if (!emailIsValid) {
 			setErrors((prev) => ({
 				...prev,
-				email: true
+				emailAddress: true
 			}))
 			setErrorMessage('Email address is not valid. Please try again')
 			Alert.alert(errorMsg)
@@ -212,16 +215,18 @@ export default function SignInScreen() {
 
 		try {
 			const signInAttempt = await signIn.create({
-				identifier: userValues.email,
+				identifier: userValues.emailAddress,
 				password: userValues.password
 			})
 
 			if (signInAttempt.status === 'complete') {
 				await setActive({ session: signInAttempt.createdSessionId })
-				router.replace('/')
+				router.replace('/(main)')
 			} else {
 				Alert.alert('An error occurred. Please try again')
-				console.error(signInAttempt)
+				console.error(
+					signInAttempt || useLocalSearchParams().createdSessionId
+				)
 			}
 		} catch (e: any) {
 			const errorParamName = e.errors
@@ -262,12 +267,13 @@ export default function SignInScreen() {
 					<View style={styles.formContainer}>
 						<Input
 							placeholder='Email'
+							type='email'
 							variant='clean'
 							loading={loading}
 							onValueChange={(value) =>
-								handleInputChange(value, 'email')
+								handleInputChange(value, 'emailAddress')
 							}
-							value={userValues.email}
+							value={userValues.emailAddress}
 						/>
 
 						<Input

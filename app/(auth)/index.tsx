@@ -46,33 +46,33 @@ export default function WelcomeScreen() {
 	})
 
 	return (
-		<BackgroundElement backgroundColor={backgroundColor}>
-			<Div style={styles.mainContainer}>
-				<Text style={[styles.title, styles.text]}>
-					Welcome to{' '}
-					<Text style={[styles.title, styles.text, styles.appName]}>
-						iGrocery
-					</Text>
+		<Div style={styles.mainContainer}>
+			{/* <BackgroundElement backgroundColor={backgroundColor}> */}
+			<Text style={[styles.title, styles.text]}>
+				Welcome to{' '}
+				<Text style={[styles.title, styles.text, styles.appName]}>
+					iGrocery
 				</Text>
-				<View style={styles.btnsContainer}>
-					<Button
-						variant='filled'
-						width='100%'
-						title='Sign In'
-						onPress={() => {
-							router.push('/signin')
-						}}
-					/>
-					<Button
-						variant='outlined'
-						width='100%'
-						title='Sign Up'
-						onPress={() => {
-							router.push('/signup')
-						}}
-					/>
-				</View>
-			</Div>
-		</BackgroundElement>
+			</Text>
+			<View style={styles.btnsContainer}>
+				<Button
+					variant='filled'
+					width='100%'
+					title='Sign In'
+					onPress={() => {
+						router.push('/signin')
+					}}
+				/>
+				<Button
+					variant='outlined'
+					width='100%'
+					title='Sign Up'
+					onPress={() => {
+						router.push('/signup')
+					}}
+				/>
+			</View>
+			{/* </BackgroundElement> */}
+		</Div>
 	)
 }

@@ -522,6 +522,7 @@ export default function ResetPasswordScreen() {
 					<View style={styles.formContainer}>
 						<Input
 							placeholder='Email'
+							type='email'
 							variant='clean'
 							loading={loading}
 							onValueChange={(value) =>
