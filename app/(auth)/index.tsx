@@ -1,21 +1,19 @@
 import { Button } from '@/components/Button'
 import { Div } from '@/components/DynamicInterfaceView'
 import { Text } from '@/components/ThemedText'
-import { BackgroundElement } from '@/components/ui/BackgroundElement'
-import { Colors } from '@/constants/Colors'
+import { useColors } from '@/constants/Colors'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useRouter } from 'expo-router'
-import { Platform, PlatformColor, StyleSheet, View } from 'react-native'
+import { Platform, StyleSheet, View } from 'react-native'
 
 export default function WelcomeScreen() {
 	const router = useRouter()
 
 	const { currentTheme } = useTheme()
 
-	const backgroundColor =
-		Platform.OS === 'ios'
-			? PlatformColor('systemBackground')
-			: Colors[currentTheme as keyof typeof Colors].background
+	const { themedColors, staticColors } = useColors()
+
+	const backgroundColor = themedColors.background
 
 	const styles = StyleSheet.create({
 		mainContainer: {
@@ -26,7 +24,7 @@ export default function WelcomeScreen() {
 			gap: 20
 		},
 		text: {
-			color: Colors[currentTheme as keyof typeof Colors].text
+			color: themedColors.text
 		},
 		title: {
 			fontSize: Platform.OS === 'ios' ? 70 : 65,

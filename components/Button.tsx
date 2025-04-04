@@ -9,10 +9,10 @@ import {
 	PressableProps,
 	StyleSheet,
 	TextStyle,
-	ViewStyle,
+	ViewStyle
 } from 'react-native'
 import { Text } from './ThemedText'
-import { Colors } from '@/constants/Colors'
+import { useColors, Colors } from '@/constants/Colors'
 import { SymbolView } from 'expo-symbols'
 import Ionicons from '@expo/vector-icons/Ionicons'
 
@@ -59,13 +59,15 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 	const { currentTheme } = useTheme()
 	const contrastTheme = currentTheme === 'light' ? 'dark' : 'light'
 
+	const { themedColors, staticColors } = useColors()
+
 	const sizeStyles: Record<
 		CustomButtonSize,
 		{ height: number; fontSize: number; padding: number }
 	> = {
 		sm: { height: 36, fontSize: 14, padding: 12 },
 		md: { height: 44, fontSize: 16, padding: 16 },
-		lg: { height: 55, fontSize: 18, padding: 20 },
+		lg: { height: 55, fontSize: 18, padding: 20 }
 	}
 
 	const getVariantStyle = () => {
@@ -76,7 +78,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 			display: 'flex',
 			flexDirection: 'row',
 			justifyContent: 'center',
-			alignItems: 'center',
+			alignItems: 'center'
 		}
 
 		switch (variant) {
@@ -90,7 +92,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 					borderColor:
 						currentTheme === 'dark'
 							? 'rgb(255, 255, 255)'
-							: 'rgb(24, 24, 24)',
+							: 'rgb(24, 24, 24)'
 				}
 			case 'outlined':
 				return {
@@ -99,19 +101,16 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 					borderColor:
 						currentTheme === 'dark'
 							? 'rgb(255, 255, 255)'
-							: 'rgb(24, 24, 24)',
+							: 'rgb(24, 24, 24)'
 				}
 			case 'danger':
 				return {
 					...baseStyle,
-					backgroundColor:
-						Platform.OS === 'ios'
-							? PlatformColor('systemRed')
-							: Colors.danger,
+					backgroundColor: staticColors.danger,
 					borderColor:
 						Platform.OS === 'ios'
 							? PlatformColor('systemRed')
-							: Colors.danger,
+							: staticColors.danger
 				}
 			case 'danger-outlined':
 				return {
@@ -120,25 +119,25 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 					borderColor:
 						Platform.OS === 'ios'
 							? PlatformColor('systemRed')
-							: Colors.danger,
+							: staticColors.danger
 				}
 			case 'text':
 				return {
 					...baseStyle,
 					backgroundColor: 'transparent',
-					borderColor: 'transparent',
+					borderColor: 'transparent'
 				}
 			case 'danger-text':
 				return {
 					...baseStyle,
 					backgroundColor: 'transparent',
-					borderColor: 'transparent',
+					borderColor: 'transparent'
 				}
 			case 'icon-button':
 				return {
 					...baseStyle,
 					backgroundColor: 'transparent',
-					borderColor: 'transparent',
+					borderColor: 'transparent'
 				}
 			case 'icon-button-outlined':
 				return {
@@ -147,7 +146,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 					borderColor:
 						currentTheme === 'dark'
 							? 'rgb(255, 255, 255)'
-							: 'rgb(24, 24, 24)',
+							: 'rgb(24, 24, 24)'
 				}
 		}
 	}
@@ -170,28 +169,18 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 					: Colors[useContrastColors ? contrastTheme : currentTheme]
 							.text
 			case 'danger-outlined':
-				return Platform.OS === 'ios'
-					? PlatformColor('systemRed')
-					: Colors.danger
+				staticColors.danger
 			case 'text':
-				return Platform.OS === 'ios'
-					? PlatformColor('label')
-					: Colors[useContrastColors ? contrastTheme : currentTheme]
-							.text
+				return Colors[useContrastColors ? contrastTheme : currentTheme]
+					.text
 			case 'danger-text':
-				return Platform.OS === 'ios'
-					? PlatformColor('systemRed')
-					: Colors.danger
+				return staticColors.danger
 			case 'icon-button':
-				return Platform.OS === 'ios'
-					? PlatformColor('label')
-					: Colors[useContrastColors ? contrastTheme : currentTheme]
-							.text
+				return Colors[useContrastColors ? contrastTheme : currentTheme]
+					.text
 			case 'icon-button-outlined':
-				return Platform.OS === 'ios'
-					? PlatformColor('label')
-					: Colors[useContrastColors ? contrastTheme : currentTheme]
-							.text
+				return Colors[useContrastColors ? contrastTheme : currentTheme]
+					.text
 		}
 	}
 
@@ -205,8 +194,8 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 					...getVariantStyle(),
 					height: sizeStyles[size].height,
 					paddingHorizontal: sizeStyles[size].padding,
-					opacity: disabled ? 0.5 : 1,
-				},
+					opacity: disabled ? 0.5 : 1
+				}
 			])}>
 			{loading ? (
 				<ActivityIndicator color={getTextColor()} />
@@ -220,9 +209,9 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 								color: getTextColor(),
 								textAlign: 'center',
 								margin: 0,
-								fontWeight: '700',
+								fontWeight: '700'
 							},
-							textStyle,
+							textStyle
 						])}>
 						{title}
 					</Text>

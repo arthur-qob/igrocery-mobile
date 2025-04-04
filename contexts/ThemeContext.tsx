@@ -3,34 +3,41 @@ import {
 	ReactNode,
 	useContext,
 	useEffect,
-	useState,
+	useState
 } from 'react'
-import { useColorScheme } from 'react-native'
+import { Appearance, useColorScheme } from 'react-native'
 
 type colorTheme = 'light' | 'dark'
 type Theme = 'light' | 'dark' | 'system'
 
 interface ThemeContextProps {
 	currentTheme: colorTheme
-	setTheme: (theme: Theme) => void
+	setThemeOpt: (theme: Theme) => void
+	themes: Theme[]
+	themeOpt: Theme
 }
 
 export const ThemeContext = createContext<ThemeContextProps>({
 	currentTheme: 'light',
-	setTheme: () => {},
+	setThemeOpt: () => {},
+	themes: ['light', 'dark', 'system'],
+	themeOpt: 'system'
 })
 
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({
-	children,
+	children
 }) => {
-	const [theme, setTheme] = useState<Theme>('system')
+	const themes: Theme[] = ['light', 'dark', 'system']
+
+	const [themeOpt, setThemeOpt] = useState<Theme>('system')
 
 	const systemTheme = (useColorScheme() ?? 'light') as colorTheme
 
-	const currentTheme: colorTheme = theme === 'system' ? systemTheme : theme
+	const currentTheme = themeOpt === 'system' ? systemTheme : themeOpt
 
 	return (
-		<ThemeContext.Provider value={{ currentTheme, setTheme }}>
+		<ThemeContext.Provider
+			value={{ currentTheme, setThemeOpt, themes, themeOpt }}>
 			{children}
 		</ThemeContext.Provider>
 	)

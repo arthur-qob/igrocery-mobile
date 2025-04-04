@@ -1,6 +1,6 @@
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import { useFonts } from 'expo-font'
-import { Slot } from 'expo-router'
+import { Slot, Stack } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect } from 'react'
@@ -38,6 +38,20 @@ export default function RootLayout() {
 				tokenCache={tokenCache}
 				publishableKey={publishableKey}>
 				<Slot />
+				{/* <Stack
+					screenOptions={{
+						headerShown: false
+					}}>
+					<Stack.Screen name='/(auth)' />
+					<Stack.Screen name='/(main)' />
+					<Stack.Screen
+						name='/users/[user]'
+						options={{
+							presentation: 'modal',
+							animation: 'slide_from_bottom'
+						}}
+					/>
+				</Stack> */}
 			</ClerkProvider>
 			<StatusBar style='auto' />
 		</ThemeProvider>

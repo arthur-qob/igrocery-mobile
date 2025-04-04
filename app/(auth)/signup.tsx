@@ -3,7 +3,7 @@ import { Div } from '@/components/DynamicInterfaceView'
 import { Input } from '@/components/Input'
 import { Text } from '@/components/ThemedText'
 import { BackgroundElement } from '@/components/ui/BackgroundElement'
-import { Colors } from '@/constants/Colors'
+import { useColors } from '@/constants/Colors'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useAuth, useClerk, useSignUp } from '@clerk/clerk-expo'
 import { BlurView } from 'expo-blur'
@@ -24,12 +24,9 @@ export default function SignUpScreen() {
 
 	const { currentTheme } = useTheme()
 
-	const themeColors = Colors[currentTheme as keyof typeof Colors]
+	const { themedColors, staticColors } = useColors()
 
-	const backgroundColor =
-		Platform.OS === 'ios'
-			? PlatformColor('systemBackground')
-			: themeColors.background
+	const backgroundColor = themedColors.background as any
 
 	const styles = StyleSheet.create({
 		mainContainer: {
@@ -41,7 +38,7 @@ export default function SignUpScreen() {
 			gap: 20
 		},
 		text: {
-			color: themeColors.text
+			color: themedColors.text
 		},
 		title: {
 			fontSize: Platform.OS === 'ios' ? 70 : 65,
@@ -51,9 +48,9 @@ export default function SignUpScreen() {
 			fontWeight: 'bold'
 		},
 		formContainer: {
-			backgroundColor: themeColors.panel,
+			backgroundColor: themedColors.panel,
 			borderWidth: 1,
-			borderColor: themeColors.panelBorder,
+			borderColor: themedColors.panelBorder,
 			borderRadius: 10,
 			paddingVertical: 30,
 			paddingHorizontal: 20,
@@ -67,10 +64,10 @@ export default function SignUpScreen() {
 			width: 40,
 			height: 50,
 			fontSize: 20,
-			color: Colors[currentTheme as keyof typeof Colors].text,
+			color: themedColors.text,
 			textAlign: 'center',
 			borderWidth: 1,
-			borderColor: Colors[currentTheme as keyof typeof Colors].text,
+			borderColor: themedColors.text,
 			borderRadius: 10
 		},
 		errorsContainer: {
@@ -80,48 +77,13 @@ export default function SignUpScreen() {
 			backgroundColor:
 				Platform.OS === 'ios'
 					? PlatformColor('systemRed')
-					: Colors.danger
+					: staticColors.danger
 		},
 		errors: {
 			fontWeight: 'semibold',
 			fontSize: 20
 		}
 	})
-
-	const nav = useNavigation()
-	const [loadingScreen, setloadingScreen] = useState(true)
-
-	useEffect(() => {
-		nav.setOptions({
-			headerShown: true,
-			headerTitle: 'Sign Up'
-		})
-
-		if (Platform.OS === 'android') {
-			const timeout = setTimeout(() => {
-				setloadingScreen(false)
-				nav.setOptions({
-					headerShown: true,
-					headerTitle: 'Sign Up'
-				})
-			}, 2000)
-
-			return () => clearTimeout(timeout)
-		}
-	}, [])
-
-	if (Platform.OS === 'android' && loadingScreen) {
-		return (
-			<Div
-				style={{
-					justifyContent: 'center',
-					alignItems: 'center',
-					flex: 1
-				}}>
-				<ActivityIndicator size='large' />
-			</Div>
-		)
-	}
 
 	const [userValues, setUserValues] = useState<{
 		[key: string]: string
@@ -203,6 +165,8 @@ export default function SignUpScreen() {
 
 	const [pendingVerification, setPendingVerification] = useState(false)
 
+	const nav = useNavigation()
+
 	useEffect(() => {
 		if (pendingVerification) {
 			nav.setOptions({
@@ -224,11 +188,11 @@ export default function SignUpScreen() {
 					borderColor:
 						Platform.OS === 'ios'
 							? PlatformColor('systemRed')
-							: Colors.danger,
+							: staticColors.danger,
 					color:
 						Platform.OS === 'ios'
 							? PlatformColor('systemRed')
-							: Colors.danger
+							: staticColors.danger
 				}
 			}
 
@@ -327,6 +291,40 @@ export default function SignUpScreen() {
 			} finally {
 				setLoading(false)
 			}
+		}
+
+		const [loadingScreen, setloadingScreen] = useState(true)
+
+		useEffect(() => {
+			nav.setOptions({
+				headerShown: true,
+				headerTitle: 'Sign Up'
+			})
+
+			if (Platform.OS === 'android') {
+				const timeout = setTimeout(() => {
+					setloadingScreen(false)
+					nav.setOptions({
+						headerShown: true,
+						headerTitle: 'Sign Up'
+					})
+				}, 2000)
+
+				return () => clearTimeout(timeout)
+			}
+		}, [])
+
+		if (Platform.OS === 'android' && loadingScreen) {
+			return (
+				<Div
+					style={{
+						justifyContent: 'center',
+						alignItems: 'center',
+						flex: 1
+					}}>
+					<ActivityIndicator size='large' />
+				</Div>
+			)
 		}
 
 		return (

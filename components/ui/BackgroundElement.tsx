@@ -1,4 +1,4 @@
-import { Colors } from '@/constants/Colors'
+import { useColors } from '@/constants/Colors'
 import { useTheme } from '@/contexts/ThemeContext'
 import { Children } from 'react'
 import {
@@ -24,6 +24,8 @@ const BackgroundElement: React.FC<BackgroundElementProps> = ({
 }) => {
 	const { currentTheme } = useTheme()
 
+	const { themedColors, staticColors } = useColors()
+
 	const { width, height } = Dimensions.get('window')
 
 	const opt = 2
@@ -48,7 +50,7 @@ const BackgroundElement: React.FC<BackgroundElementProps> = ({
 			justifyContent: 'flex-end',
 			alignItems: 'flex-end',
 			borderRadius: width,
-			shadowColor: Colors.backgroundElement[opt].borderColor,
+			shadowColor: staticColors.backgroundElement[opt].borderColor,
 			shadowOffset: {
 				width: 0,
 				height: 0
@@ -84,21 +86,21 @@ const BackgroundElement: React.FC<BackgroundElementProps> = ({
 							<Stop
 								offset='15%'
 								stopColor={String(
-									Colors.backgroundElement[opt].color1
+									staticColors.backgroundElement[opt].color1
 								)}
 								stopOpacity='0'
 							/>
 							<Stop
 								offset='45%'
 								stopColor={String(
-									Colors.backgroundElement[opt].color2
+									staticColors.backgroundElement[opt].color2
 								)}
 								stopOpacity='0.25'
 							/>
 							<Stop
 								offset='75%'
 								stopColor={String(
-									Colors.backgroundElement[opt].color3
+									staticColors.backgroundElement[opt].color3
 								)}
 								stopOpacity='1'
 							/>

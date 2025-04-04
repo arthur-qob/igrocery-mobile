@@ -1,43 +1,68 @@
-// This file is a fallback for using MaterialIcons on Android and web.
+import Ionicons from '@expo/vector-icons/Ionicons'
+import { AnimationSpec, SymbolType, SymbolView } from 'expo-symbols'
+import React from 'react'
+import { Platform } from 'react-native'
+import toHex from '../../scripts/toHex'
 
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { SymbolWeight } from 'expo-symbols';
-import React from 'react';
-import { OpaqueColorValue, StyleProp, ViewStyle } from 'react-native';
-
-// Add your SFSymbol to MaterialIcons mappings here.
-const MAPPING = {
-  // See MaterialIcons here: https://icons.expo.fyi
-  // See SF Symbols in the SF Symbols app on Mac.
-  'house.fill': 'home',
-  'paperplane.fill': 'send',
-  'chevron.left.forwardslash.chevron.right': 'code',
-  'chevron.right': 'chevron-right',
-} as Partial<
-  Record<
-    import('expo-symbols').SymbolViewProps['name'],
-    React.ComponentProps<typeof MaterialIcons>['name']
-  >
->;
-
-export type IconSymbolName = keyof typeof MAPPING;
-
-/**
- * An icon component that uses native SFSymbols on iOS, and MaterialIcons on Android and web. This ensures a consistent look across platforms, and optimal resource usage.
- *
- * Icon `name`s are based on SFSymbols and require manual mapping to MaterialIcons.
- */
-export function IconSymbol({
-  name,
-  size = 24,
-  color,
-  style,
-}: {
-  name: IconSymbolName;
-  size?: number;
-  color: string | OpaqueColorValue;
-  style?: StyleProp<ViewStyle>;
-  weight?: SymbolWeight;
-}) {
-  return <MaterialIcons color={color} size={size} name={MAPPING[name]} style={style} />;
+const iconsMapping: Partial<
+	Record<
+		import('expo-symbols').SymbolViewProps['name'] | string,
+		React.ComponentProps<typeof Ionicons>['name']
+	>
+> = {
+	eye: 'eye',
+	'eye.slash': 'eye-off',
+	exclamationmark: 'alert',
+	'person.circle': 'person-circle-outline',
+	'person.circle.fill': 'person-circle',
+	plus: 'add',
+	gear: 'settings-outline',
+	'gear.fill': 'settings',
+	house: 'home-outline',
+	'house.fill': 'home',
+	'chevron.right': 'chevron-forward'
 }
+
+type IconSymbolProps = {
+	name: keyof typeof iconsMapping
+	size?: number
+	color?: string | null
+	animationSpec?: AnimationSpec
+	type?: SymbolType
+}
+
+const IconSymbol: React.FC<IconSymbolProps> = ({
+	name,
+	size = 28,
+	color,
+	animationSpec,
+	type = 'monochrome'
+}) => {
+	// Remove `.fill` if it exists and fallback to the non-fill version
+	const mappedName = iconsMapping[name]
+	if (name && name.includes('gear.fill')) {
+		name = name.replace('.fill', '')
+	}
+
+	return Platform.OS === 'ios' ? (
+		<SymbolView
+			name={name as import('expo-symbols').SymbolViewProps['name']}
+			tintColor={
+				toHex(
+					color
+				) as import('expo-symbols').SymbolViewProps['tintColor']
+			}
+			size={size}
+			type={type}
+			animationSpec={animationSpec}
+		/>
+	) : (
+		<Ionicons
+			name={mappedName}
+			color={color as string}
+			size={size}
+		/>
+	)
+}
+
+export default IconSymbol

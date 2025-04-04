@@ -7,7 +7,7 @@ import { Div } from '@/components/DynamicInterfaceView'
 import { Input } from '@/components/Input'
 import { Text } from '@/components/ThemedText'
 import { BackgroundElement } from '@/components/ui/BackgroundElement'
-import { Colors } from '@/constants/Colors'
+import { useColors } from '@/constants/Colors'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useSignIn } from '@clerk/clerk-expo'
 import { BlurView } from 'expo-blur'
@@ -35,14 +35,10 @@ export default function ResetPasswordScreen() {
 	// Load router from expo-router for screen navigation
 	const router = useRouter()
 
-	// Define the theme colors
-	const themeColors = Colors[currentTheme as keyof typeof Colors]
+	const { themedColors, staticColors } = useColors()
 
 	// Define the BackgroundElement's background color according to the current theme
-	const backgroundColor =
-		Platform.OS === 'ios'
-			? PlatformColor('systemBackground')
-			: themeColors.background
+	const backgroundColor = themedColors.background as any
 
 	// Load the navigation object to define properties like headerTitle
 	const nav = useNavigation()
@@ -61,9 +57,9 @@ export default function ResetPasswordScreen() {
 			gap: 20
 		},
 		formContainer: {
-			backgroundColor: themeColors.panel,
+			backgroundColor: themedColors.panel,
 			borderWidth: 1,
-			borderColor: themeColors.panelBorder,
+			borderColor: themedColors.panelBorder,
 			borderRadius: 10,
 			paddingVertical: 30,
 			paddingHorizontal: 20,
@@ -77,10 +73,10 @@ export default function ResetPasswordScreen() {
 			width: 40,
 			height: 50,
 			fontSize: 20,
-			color: themeColors.text,
+			color: themedColors.text,
 			textAlign: 'center',
 			borderWidth: 1,
-			borderColor: themeColors.text,
+			borderColor: themedColors.text,
 			borderRadius: 10
 		},
 		obs: {
@@ -91,10 +87,7 @@ export default function ResetPasswordScreen() {
 			width: 'auto',
 			borderRadius: 10,
 			padding: 20,
-			backgroundColor:
-				Platform.OS === 'ios'
-					? PlatformColor('systemRed')
-					: Colors.danger
+			backgroundColor: staticColors.danger
 		},
 		errors: {
 			fontWeight: 'semibold',
@@ -410,14 +403,8 @@ export default function ResetPasswordScreen() {
 			if (errors.verifyCode) {
 				return {
 					borderWidth: 2,
-					borderColor:
-						Platform.OS === 'ios'
-							? PlatformColor('systemRed')
-							: Colors.danger,
-					color:
-						Platform.OS === 'ios'
-							? PlatformColor('systemRed')
-							: Colors.danger
+					borderColor: staticColors.danger,
+					color: staticColors.danger
 				}
 			}
 

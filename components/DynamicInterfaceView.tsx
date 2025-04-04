@@ -1,4 +1,4 @@
-import { Colors } from '@/constants/Colors'
+import { useColors } from '@/constants/Colors'
 import { useTheme } from '@/contexts/ThemeContext'
 import { ReactNode } from 'react'
 import {
@@ -32,11 +32,9 @@ const DynamicInterfaceView: React.FC<DynamicInterfaceViewProps> = ({
 }) => {
 	const { currentTheme } = useTheme()
 
-	const backgroundColor = (
-		Platform.OS === 'ios'
-			? PlatformColor('systemBackground')
-			: Colors[currentTheme as keyof typeof Colors].background
-	) as string
+	const { themedColors, staticColors } = useColors()
+
+	const backgroundColor = themedColors.background
 
 	const baseStyle: ViewStyle = {
 		flex: 1,

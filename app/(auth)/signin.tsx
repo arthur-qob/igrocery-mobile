@@ -3,7 +3,7 @@ import { Div } from '@/components/DynamicInterfaceView'
 import { Input } from '@/components/Input'
 import { Text } from '@/components/ThemedText'
 import { BackgroundElement } from '@/components/ui/BackgroundElement'
-import { Colors } from '@/constants/Colors'
+import { useColors } from '@/constants/Colors'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useSignIn } from '@clerk/clerk-expo'
 import { BlurView } from 'expo-blur'
@@ -23,10 +23,9 @@ export default function SignInScreen() {
 
 	const { currentTheme } = useTheme()
 
-	const backgroundColor =
-		Platform.OS === 'ios'
-			? PlatformColor('systemBackground')
-			: Colors[currentTheme as keyof typeof Colors].background
+	const { themedColors, staticColors } = useColors()
+
+	const backgroundColor = themedColors.background as any
 
 	const styles = StyleSheet.create({
 		mainContainer: {
@@ -38,7 +37,7 @@ export default function SignInScreen() {
 			gap: 20
 		},
 		text: {
-			color: Colors[currentTheme as keyof typeof Colors].text
+			color: themedColors.text
 		},
 		title: {
 			fontSize: Platform.OS === 'ios' ? 70 : 65,
@@ -48,10 +47,9 @@ export default function SignInScreen() {
 			fontWeight: 'bold'
 		},
 		formContainer: {
-			backgroundColor: Colors[currentTheme as keyof typeof Colors].panel,
+			backgroundColor: themedColors.panel,
 			borderWidth: 1,
-			borderColor:
-				Colors[currentTheme as keyof typeof Colors].panelBorder,
+			borderColor: themedColors.panelBorder,
 			borderRadius: 10,
 			paddingVertical: 30,
 			paddingHorizontal: 20,
@@ -65,10 +63,7 @@ export default function SignInScreen() {
 			width: 'auto',
 			borderRadius: 10,
 			padding: 20,
-			backgroundColor:
-				Platform.OS === 'ios'
-					? PlatformColor('systemRed')
-					: Colors.danger
+			backgroundColor: staticColors.danger
 		},
 		errors: {
 			fontWeight: 'semibold',
@@ -78,38 +73,6 @@ export default function SignInScreen() {
 
 	const nav = useNavigation()
 	const [loadingScreen, setloadingScreen] = useState(true)
-
-	useEffect(() => {
-		nav.setOptions({
-			headerShown: true,
-			headerTitle: 'Sign In'
-		})
-
-		if (Platform.OS === 'android') {
-			const timeout = setTimeout(() => {
-				setloadingScreen(false)
-				nav.setOptions({
-					headerShown: true,
-					headerTitle: 'Sign Up'
-				})
-			}, 2000)
-
-			return () => clearTimeout(timeout)
-		}
-	}, [])
-
-	if (Platform.OS === 'android' && loadingScreen) {
-		return (
-			<Div
-				style={{
-					justifyContent: 'center',
-					alignItems: 'center',
-					flex: 1
-				}}>
-				<ActivityIndicator size='large' />
-			</Div>
-		)
-	}
 
 	const [userValues, setUserValues] = useState<{
 		[key: string]: string
@@ -166,153 +129,187 @@ export default function SignInScreen() {
 		})
 	}
 
-	const handleSubmit = async () => {
-		setLoading(true)
+	useEffect(() => {
+		nav.setOptions({
+			headerShown: true,
+			headerTitle: 'Sign In'
+		})
 
-		resetErrors()
+		if (Platform.OS === 'android') {
+			const timeout = setTimeout(() => {
+				setloadingScreen(false)
+				nav.setOptions({
+					headerShown: true,
+					headerTitle: 'Sign In'
+				})
+			}, 2000)
 
-		if (!isLoaded) {
-			setLoading(false)
-			return
+			return () => clearTimeout(timeout)
 		}
+	}, [])
 
-		if (!userValues.emailAddress || !userValues.password) {
-			setErrors((prev) => ({
-				...prev,
-				email: userValues.emailAddress.trim() === '',
-				password: userValues.password.trim() === ''
-			}))
-			setErrorMessage('Please fill in all fields')
-			Alert.alert(errorMsg)
-			console.log(errorMsg)
-			setLoading(false)
-			return
-		}
-
-		if (!emailIsValid) {
-			setErrors((prev) => ({
-				...prev,
-				emailAddress: true
-			}))
-			setErrorMessage('Email address is not valid. Please try again')
-			Alert.alert(errorMsg)
-			console.error(errorMsg)
-			setLoading(false)
-			return
-		}
-
-		if (!passwordIsValid) {
-			setErrors((prev) => ({
-				...prev,
-				password: true
-			}))
-			setErrorMessage('Password is not valid. Please try again')
-			Alert.alert(errorMsg)
-			console.error(errorMsg)
-			setLoading(false)
-			return
-		}
-
-		try {
-			const signInAttempt = await signIn.create({
-				identifier: userValues.emailAddress,
-				password: userValues.password
-			})
-
-			if (signInAttempt.status === 'complete') {
-				await setActive({ session: signInAttempt.createdSessionId })
-				router.replace('/(main)')
-			} else {
-				Alert.alert('An error occurred. Please try again')
-				console.error(
-					signInAttempt || useLocalSearchParams().createdSessionId
-				)
-			}
-		} catch (e: any) {
-			const errorParamName = e.errors
-				.map((err: any) => err.meta.paramName)
-				.join('')
-
-			setErrors((prev) => ({
-				...prev,
-				[errorParamName]: true
-			}))
-
-			setErrorMessage((prev) => {
-				let newMsg = prev
-				newMsg =
-					'An error occurred' +
-					'\n' +
-					e.errors.map((err: any) => err.longMessage).join('\n')
-				return newMsg
-			})
-			Alert.alert(errorMsg)
-			console.error(JSON.stringify(e, null, 2))
-		} finally {
-			setLoading(false)
-		}
-	}
-
-	return (
-		<BackgroundElement backgroundColor={backgroundColor}>
-			<BlurView
-				intensity={50}
-				experimentalBlurMethod='dimezisBlurView'
+	if (Platform.OS === 'android' && loadingScreen) {
+		return (
+			<Div
 				style={{
-					...StyleSheet.absoluteFillObject,
-					overflow: 'hidden',
-					backgroundColor: 'transparent'
+					justifyContent: 'center',
+					alignItems: 'center',
+					flex: 1
 				}}>
-				<Div style={styles.mainContainer}>
-					<View style={styles.formContainer}>
-						<Input
-							placeholder='Email'
-							type='email'
-							variant='clean'
-							loading={loading}
-							onValueChange={(value) =>
-								handleInputChange(value, 'emailAddress')
-							}
-							value={userValues.emailAddress}
-						/>
+				<ActivityIndicator size='large' />
+			</Div>
+		)
+	} else {
+		const handleSubmit = async () => {
+			setLoading(true)
 
-						<Input
-							placeholder='Password'
-							type='password'
-							variant='clean'
-							loading={loading}
-							onValueChange={(value) =>
-								handleInputChange(value, 'password')
-							}
-							value={userValues.password}
-						/>
+			resetErrors()
 
-						<Button
-							variant='text'
-							title='Forgot your password?'
-							onPress={() => router.push('/reset-password')}
-						/>
+			if (!isLoaded) {
+				setLoading(false)
+				return
+			}
 
-						<Button
-							variant='filled'
-							title='Sign In'
-							loading={loading}
-							onPress={handleSubmit}
-						/>
+			if (!userValues.emailAddress || !userValues.password) {
+				setErrors((prev) => ({
+					...prev,
+					email: userValues.emailAddress.trim() === '',
+					password: userValues.password.trim() === ''
+				}))
+				setErrorMessage('Please fill in all fields')
+				Alert.alert(errorMsg)
+				console.log(errorMsg)
+				setLoading(false)
+				return
+			}
 
-						<Button
-							variant='text'
-							title="Don't have an account? Sign Up"
-							onPress={() => router.push('/signup')}
-						/>
-					</View>
-					{Object.values(errors).some((value) => value === true) && (
-						<View style={styles.errorsContainer}>
-							<Text style={styles.errors}>{errorMsg}</Text>
+			if (!emailIsValid) {
+				setErrors((prev) => ({
+					...prev,
+					emailAddress: true
+				}))
+				setErrorMessage('Email address is not valid. Please try again')
+				Alert.alert(errorMsg)
+				console.error(errorMsg)
+				setLoading(false)
+				return
+			}
+
+			if (!passwordIsValid) {
+				setErrors((prev) => ({
+					...prev,
+					password: true
+				}))
+				setErrorMessage('Password is not valid. Please try again')
+				Alert.alert(errorMsg)
+				console.error(errorMsg)
+				setLoading(false)
+				return
+			}
+
+			try {
+				const signInAttempt = await signIn.create({
+					identifier: userValues.emailAddress,
+					password: userValues.password
+				})
+
+				if (signInAttempt.status === 'complete') {
+					await setActive({ session: signInAttempt.createdSessionId })
+					router.replace('/(main)')
+				} else {
+					Alert.alert('An error occurred. Please try again')
+					console.error(
+						signInAttempt || useLocalSearchParams().createdSessionId
+					)
+				}
+			} catch (e: any) {
+				const errorParamName = e.errors
+					.map((err: any) => err.meta.paramName)
+					.join('')
+
+				setErrors((prev) => ({
+					...prev,
+					[errorParamName]: true
+				}))
+
+				setErrorMessage((prev) => {
+					let newMsg = prev
+					newMsg =
+						'An error occurred' +
+						'\n' +
+						e.errors.map((err: any) => err.longMessage).join('\n')
+					return newMsg
+				})
+				Alert.alert(errorMsg)
+				console.error(JSON.stringify(e, null, 2))
+			} finally {
+				setLoading(false)
+			}
+		}
+
+		return (
+			<BackgroundElement backgroundColor={backgroundColor}>
+				<BlurView
+					intensity={50}
+					experimentalBlurMethod='dimezisBlurView'
+					style={{
+						...StyleSheet.absoluteFillObject,
+						overflow: 'hidden',
+						backgroundColor: 'transparent'
+					}}>
+					<Div style={styles.mainContainer}>
+						<View style={styles.formContainer}>
+							<Input
+								placeholder='Email'
+								type='email'
+								variant='clean'
+								loading={loading}
+								onValueChange={(value) =>
+									handleInputChange(value, 'emailAddress')
+								}
+								value={userValues.emailAddress}
+							/>
+
+							<Input
+								placeholder='Password'
+								type='password'
+								variant='clean'
+								loading={loading}
+								onValueChange={(value) =>
+									handleInputChange(value, 'password')
+								}
+								value={userValues.password}
+							/>
+
+							<Button
+								variant='text'
+								title='Forgot your password?'
+								onPress={() => router.push('/reset-password')}
+							/>
+
+							<Button
+								variant='filled'
+								title='Sign In'
+								loading={loading}
+								onPress={handleSubmit}
+							/>
+
+							<Button
+								variant='text'
+								title="Don't have an account? Sign Up"
+								onPress={() => router.push('/signup')}
+							/>
 						</View>
-					)}
-				</Div>
-			</BlurView>
-		</BackgroundElement>
-	)
+						{Object.values(errors).some(
+							(value) => value === true
+						) && (
+							<View style={styles.errorsContainer}>
+								<Text style={styles.errors}>{errorMsg}</Text>
+							</View>
+						)}
+					</Div>
+				</BlurView>
+			</BackgroundElement>
+		)
+	}
 }

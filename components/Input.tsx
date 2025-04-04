@@ -12,8 +12,8 @@ import {
 	View,
 	TouchableOpacity
 } from 'react-native'
-import { Colors } from '@/constants/Colors'
-import Ionicons from '@expo/vector-icons/Ionicons'
+import { useColors, Colors } from '@/constants/Colors'
+import IconSymbol from '@/components/ui/IconSymbol'
 
 type InputType = 'text' | 'password' | 'email' | 'number'
 
@@ -58,6 +58,8 @@ const Input: React.FC<InputProps> = ({
 	const { currentTheme } = useTheme()
 	const contrastTheme = currentTheme === 'light' ? 'dark' : 'light'
 
+	const { themedColors, staticColors } = useColors()
+
 	if (Platform.OS === 'ios') {
 		var { SymbolView } = require('expo-symbols')
 	}
@@ -82,9 +84,7 @@ const Input: React.FC<InputProps> = ({
 					borderWidth: withErrors ? 2 : 1,
 					borderRadius: 10,
 					borderColor: withErrors
-						? Platform.OS === 'ios'
-							? PlatformColor('systemRed')
-							: Colors.danger
+						? staticColors.danger
 						: Colors[
 								useContrastColors ? contrastTheme : currentTheme
 							].border
@@ -94,9 +94,7 @@ const Input: React.FC<InputProps> = ({
 					backgroundColor: 'transparent',
 					borderBottomWidth: withErrors ? 2 : 1,
 					borderBottomColor: withErrors
-						? Platform.OS === 'ios'
-							? PlatformColor('systemRed')
-							: Colors.danger
+						? Colors.danger
 						: Colors[
 								useContrastColors ? contrastTheme : currentTheme
 							].border
@@ -106,12 +104,10 @@ const Input: React.FC<InputProps> = ({
 
 	const getTextColor = () => {
 		if (disabled) {
-			return Platform.OS === 'ios' ? PlatformColor('systemGray3') : 'gray'
+			return themedColors.inactiveColor
 		}
 
-		return Platform.OS === 'ios'
-			? PlatformColor('label')
-			: Colors[useContrastColors ? contrastTheme : currentTheme].text
+		return themedColors.text
 	}
 
 	const [isFocused, setIsFocused] = useState(false)
@@ -123,7 +119,7 @@ const Input: React.FC<InputProps> = ({
 			position: 'relative'
 		},
 		error: {
-			color: Platform.OS === 'ios' ? PlatformColor('systemRed') : 'red',
+			color: staticColors.danger,
 			marginTop: 4
 		},
 		disabled: {
@@ -171,9 +167,7 @@ const Input: React.FC<InputProps> = ({
 					placeholder={placeholder}
 					placeholderTextColor={
 						withErrors
-							? Platform.OS === 'ios'
-								? PlatformColor('systemRed')
-								: Colors.danger
+							? staticColors.danger
 							: isFocused
 								? Platform.OS === 'ios'
 									? PlatformColor('systemGray3')
@@ -197,15 +191,17 @@ const Input: React.FC<InputProps> = ({
 								name={showPassword ? 'eye' : 'eye.slash'}
 								tintColor={
 									withErrors
-										? PlatformColor('systemRed')
+										? staticColors.danger
 										: getTextColor()
 								}
 							/>
 						) : (
-							<Ionicons
-								name={showPassword ? 'eye' : 'eye-off'}
+							<IconSymbol
+								name={showPassword ? 'eye' : 'eye.slash'}
 								color={
-									withErrors ? Colors.danger : getTextColor()
+									withErrors
+										? staticColors.danger
+										: getTextColor()
 								}
 								size={24}
 							/>

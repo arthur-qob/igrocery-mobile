@@ -1,4 +1,4 @@
-import { Colors } from '@/constants/Colors'
+import { useColors, Colors } from '@/constants/Colors'
 import { useTheme } from '@/contexts/ThemeContext'
 import React from 'react'
 import {
@@ -8,7 +8,7 @@ import {
 	PlatformColor,
 	Platform,
 	StyleProp,
-	TextStyle,
+	TextStyle
 } from 'react-native'
 
 export type ThemedTextProps = TextProps & {
@@ -26,26 +26,28 @@ const ThemedText: React.FC<ThemedTextProps> = ({
 	const { currentTheme } = useTheme()
 	const contrastThemeColor = currentTheme === 'dark' ? 'light' : 'dark'
 
+	const { themedColors, staticColors } = useColors()
+
 	const styles = StyleSheet.create({
 		default: {
-			fontSize: 16,
+			fontSize: 16
 		},
 		defaultSemiBold: {
 			fontSize: 16,
-			fontWeight: '600',
+			fontWeight: '600'
 		},
 		title: {
 			fontSize: 32,
-			fontWeight: 'bold',
+			fontWeight: 'bold'
 		},
 		subtitle: {
 			fontSize: 20,
-			fontWeight: 'bold',
+			fontWeight: 'bold'
 		},
 		link: {
 			fontSize: 16,
-			color: '#0a7ea4',
-		},
+			color: '#0a7ea4'
+		}
 	})
 
 	return (
@@ -53,18 +55,15 @@ const ThemedText: React.FC<ThemedTextProps> = ({
 			style={[
 				{
 					color: !contrast
-						? Platform.OS === 'ios'
-							? PlatformColor('label')
-							: Colors[currentTheme as keyof typeof Colors].text
-						: Colors[contrastThemeColor as keyof typeof Colors]
-								.text,
+						? themedColors.text
+						: Colors[contrastThemeColor as keyof typeof Colors].text
 				},
 				type === 'default' ? styles.default : undefined,
 				type === 'title' ? styles.title : undefined,
 				type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
 				type === 'subtitle' ? styles.subtitle : undefined,
 				type === 'link' ? styles.link : undefined,
-				style,
+				style
 			]}
 			{...rest}
 		/>

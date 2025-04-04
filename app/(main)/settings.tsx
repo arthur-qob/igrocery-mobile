@@ -1,13 +1,23 @@
 import { Button } from '@/components/Button'
 import { Div } from '@/components/DynamicInterfaceView'
+import ProfileButton from '@/components/ProfileButton'
+import { Text } from '@/components/ThemedText'
+import { ThemeSelector } from '@/components/ThemeSelector'
+import { useColors } from '@/constants/Colors'
+import IconSymbol from '@/components/ui/IconSymbol'
 import { useClerk, useUser } from '@clerk/clerk-expo'
 import { useRouter } from 'expo-router'
-import { useState } from 'react'
-import { Alert, View } from 'react-native'
+import { useEffect, useState } from 'react'
+import {
+	Alert,
+	Image,
+	ImageSourcePropType,
+	StyleSheet,
+	TouchableOpacity,
+	View
+} from 'react-native'
 
 export default function SettingsScreen() {
-	const { user } = useUser()
-
 	const [loading, setLoading] = useState<boolean>(false)
 
 	const { signOut } = useClerk()
@@ -38,17 +48,32 @@ export default function SettingsScreen() {
 		setLoading(false)
 	}
 
+	const { themedColors, staticColors } = useColors()
+
+	const styles = StyleSheet.create({
+		mainContainer: {
+			flexDirection: 'column',
+			gap: 20
+		},
+		separator: {
+			width: '100%',
+			height: 1,
+			backgroundColor: themedColors.separator,
+			marginVertical: 5
+		}
+	})
+
 	return (
-		<Div>
-			<View>
-				<Button
-					variant='filled'
-					title='Sign Out'
-					loading={loading}
-					disabled={loading}
-					onPress={handleSignOut}
-				/>
-			</View>
+		<Div style={styles.mainContainer}>
+			<ProfileButton />
+			<ThemeSelector />
+			<Button
+				variant='filled'
+				title='Sign Out'
+				loading={loading}
+				disabled={loading}
+				onPress={handleSignOut}
+			/>
 		</Div>
 	)
 }
