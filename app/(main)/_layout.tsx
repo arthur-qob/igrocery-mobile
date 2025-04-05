@@ -1,7 +1,7 @@
 import { Redirect, Stack, Tabs } from 'expo-router'
 import TabBar from '@/components/ui/TabBar'
 import TabBarHeader from '@/components/ui/TabBarHeader'
-import { useAuth } from '@clerk/clerk-expo'
+import { useAuth, useUser } from '@clerk/clerk-expo'
 
 export default function MainLayout() {
 	const { isSignedIn } = useAuth()
@@ -9,6 +9,9 @@ export default function MainLayout() {
 	if (!isSignedIn) {
 		return <Redirect href={'/(auth)'} />
 	}
+
+	const { user } = useUser()
+	const userId = user?.id
 
 	return (
 		<Tabs
@@ -23,6 +26,7 @@ export default function MainLayout() {
 				options={{
 					title: 'Home'
 				}}
+				// initialParams={userId}
 			/>
 			<Tabs.Screen
 				name='settings'

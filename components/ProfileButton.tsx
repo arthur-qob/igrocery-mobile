@@ -10,10 +10,12 @@ import { Text } from './ThemedText'
 import IconSymbol from '@/components/ui/IconSymbol'
 import { useUser } from '@clerk/clerk-expo'
 import { useColors } from '@/constants/Colors'
-import { useRouter } from 'expo-router'
+import { useLocalSearchParams, useRouter } from 'expo-router'
 
 const ProfileButton: React.FC = () => {
 	const { user, isLoaded } = useUser()
+
+	// const {userId} = useLocalSearchParams()
 
 	const [currentUser, setCurrentUser] = useState<{ [key: string]: any }>({
 		id: null,
@@ -111,10 +113,10 @@ const ProfileButton: React.FC = () => {
 
 		const id = currentUser.id
 
-		router.push({
-			pathname: '/users/[user]',
-			params: { id }
-		})
+		// router.push({
+		// 	pathname: '/users/[user]',
+		// 	params: { id }
+		// })
 	}
 
 	return (
