@@ -20,7 +20,8 @@ const iconsMapping: Partial<
 	'gear.fill': 'settings',
 	house: 'home-outline',
 	'house.fill': 'home',
-	'chevron.right': 'chevron-forward'
+	'chevron.right': 'chevron-forward',
+	'list.bullet': 'list'
 }
 
 type IconSymbolProps = {

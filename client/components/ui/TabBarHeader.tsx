@@ -7,12 +7,15 @@ import { Text } from '../ThemedText'
 import { useTheme } from '@/contexts/ThemeContext'
 import IconSymbol from '@/components/ui/IconSymbol'
 import { useColors } from '@/constants/Colors'
+import { useRouter } from 'expo-router'
 
 const TabBarHeader: React.FC<BottomTabHeaderProps> = ({ options, route }) => {
 	const { currentTheme } = useTheme()
 	const contrastTheme = currentTheme === 'light' ? 'dark' : 'light'
 
 	const { themedColors, staticColors } = useColors()
+
+	const router = useRouter()
 
 	const title = getHeaderTitle(options, route.key)
 
@@ -56,8 +59,10 @@ const TabBarHeader: React.FC<BottomTabHeaderProps> = ({ options, route }) => {
 				<View style={{ alignSelf: 'flex-start' }}></View>
 
 				{/* Header-Right */}
-				{title === 'Home' && (
-					<TouchableOpacity style={{ alignSelf: 'flex-end' }}>
+				{title === 'Lists' && (
+					<TouchableOpacity
+						onPress={() => router.push('/(main)/list/new')}
+						style={{ alignSelf: 'flex-end' }}>
 						<IconSymbol
 							name='plus'
 							color={staticColors.tintColor as any}

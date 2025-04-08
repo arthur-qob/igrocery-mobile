@@ -152,22 +152,13 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 	}
 
 	const getTextColor = () => {
-		if (disabled) {
-			return Platform.OS === 'ios' ? PlatformColor('systemGray3') : 'gray'
-		}
-
 		switch (variant) {
 			case 'filled':
 				return Colors[contrastTheme].text
 			case 'danger':
-				return Platform.OS === 'ios'
-					? PlatformColor(`${currentTheme}Text`)
-					: Colors[contrastTheme].text
+				return Colors[contrastTheme].text
 			case 'outlined':
-				return Platform.OS === 'ios'
-					? PlatformColor('label')
-					: Colors[useContrastColors ? contrastTheme : currentTheme]
-							.text
+				return Colors[currentTheme].text
 			case 'danger-outlined':
 				staticColors.danger
 			case 'text':

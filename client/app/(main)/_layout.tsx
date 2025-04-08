@@ -1,39 +1,50 @@
-import { Redirect, Stack, Tabs } from 'expo-router'
-import TabBar from '@/components/ui/TabBar'
-import TabBarHeader from '@/components/ui/TabBarHeader'
-import { useAuth, useUser } from '@clerk/clerk-expo'
+import IconSymbol from '@/components/ui/IconSymbol'
+import { Stack, useRouter } from 'expo-router'
+import { TouchableOpacity } from 'react-native'
 
 export default function MainLayout() {
-	const { isSignedIn } = useAuth()
-
-	if (!isSignedIn) {
-		return <Redirect href={'/(auth)'} />
-	}
-
-	const { user } = useUser()
-	const userId = user?.id
+	const router = useRouter()
 
 	return (
-		<Tabs
-			tabBar={(props) => <TabBar {...props} />}
+		<Stack
 			screenOptions={{
-				header: (props) => <TabBarHeader {...props} />,
-				headerShown: true,
-				animation: 'shift'
+				headerShown: false
 			}}>
-			<Tabs.Screen
-				name='index'
+			<Stack.Screen name='(tabs)' />
+			<Stack.Screen
+				name='(users)/[user]'
 				options={{
-					title: 'Home'
+					presentation: 'modal',
+					headerShown: true,
+					headerTransparent: true,
+					headerTitle: '',
+					headerLeft: () => (
+						<TouchableOpacity onPress={() => router.back()}>
+							<IconSymbol
+								name='chevron.down'
+								color='white'
+							/>
+						</TouchableOpacity>
+					)
 				}}
-				// initialParams={userId}
 			/>
-			<Tabs.Screen
-				name='settings'
+			<Stack.Screen
+				name='list/new/index'
 				options={{
-					title: 'Settings'
+					presentation: 'modal',
+					headerShown: true,
+					headerTransparent: true,
+					headerTitle: '',
+					headerLeft: () => (
+						<TouchableOpacity onPress={() => router.back()}>
+							<IconSymbol
+								name='chevron.down'
+								color='white'
+							/>
+						</TouchableOpacity>
+					)
 				}}
 			/>
-		</Tabs>
+		</Stack>
 	)
 }

@@ -11,7 +11,7 @@ export default function NotFoundScreen() {
 			<Div style={styles.container}>
 				<Text type='title'>This screen doesn't exist.</Text>
 				<Link
-					href='/'
+					href='/(main)/(tabs)'
 					style={styles.link}>
 					<Text type='link'>Go to home screen!</Text>
 				</Link>
@@ -25,10 +25,10 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: 'center',
 		justifyContent: 'center',
-		padding: 20,
+		padding: 20
 	},
 	link: {
 		marginTop: 15,
-		paddingVertical: 15,
-	},
+		paddingVertical: 15
+	}
 })

@@ -71,10 +71,7 @@ const TabBar: React.FC<BottomTabBarProps> = ({
 								? options.title
 								: route.name
 					const isFocused = state.index === index
-					const icons = [
-						`${isFocused ? 'house.fill' : 'house'}`,
-						'gear'
-					]
+					const icons = ['list.bullet', 'gear']
 					const onPress = () => {
 						const event = navigation.emit({
 							type: 'tabPress',

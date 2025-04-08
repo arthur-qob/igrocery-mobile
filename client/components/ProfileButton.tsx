@@ -15,10 +15,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router'
 const ProfileButton: React.FC = () => {
 	const { user, isLoaded } = useUser()
 
-	// const {userId} = useLocalSearchParams()
-
 	const [currentUser, setCurrentUser] = useState<{ [key: string]: any }>({
-		id: null,
+		k: null,
 		name: null,
 		emailAddress: null,
 		isEmailVerified: null,
@@ -85,7 +83,7 @@ const ProfileButton: React.FC = () => {
 			textAlign: 'center'
 		},
 		userName: {
-			fontSize: 25
+			fontSize: 20
 		},
 		separator: {
 			width: '98%',
@@ -101,7 +99,7 @@ const ProfileButton: React.FC = () => {
 		},
 		userEmail: {
 			fontWeight: '500',
-			fontSize: 18,
+			fontSize: 15,
 			color: themedColors.inactiveColor
 		}
 	})
@@ -111,12 +109,10 @@ const ProfileButton: React.FC = () => {
 	const openUserScreen = () => {
 		if (Object.keys(currentUser).values === null) return
 
-		const id = currentUser.id
-
-		// router.push({
-		// 	pathname: '/users/[user]',
-		// 	params: { id }
-		// })
+		router.push({
+			pathname: '/(main)/(users)/[user]',
+			params: { userId: currentUser.id }
+		})
 	}
 
 	return (
@@ -142,22 +138,15 @@ const ProfileButton: React.FC = () => {
 							)}
 						</View>
 					</View>
-					<Text style={styles.userName}>{user?.firstName}</Text>
-				</View>
-				<View style={styles.separator} />
-				<View style={[styles.halves, styles.half2]}>
-					<Text style={styles.userEmail}>
-						Email: {currentUser.emailAddress}
-					</Text>
-					<IconSymbol
-						name={`${currentUser.isEmailVerified ? 'checkmark.circle' : 'xmark.circle'}`}
-						size={25}
-						color={
-							currentUser.isEmailVerified
-								? staticColors.success
-								: staticColors.danger
-						}
-					/>
+					<View
+						style={{
+							gap: 10
+						}}>
+						<Text style={styles.userName}>{user?.firstName}</Text>
+						<Text style={styles.userEmail}>
+							{currentUser.emailAddress}
+						</Text>
+					</View>
 				</View>
 			</View>
 			<IconSymbol

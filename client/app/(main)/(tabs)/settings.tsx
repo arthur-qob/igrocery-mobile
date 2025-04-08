@@ -4,18 +4,10 @@ import ProfileButton from '@/components/ProfileButton'
 import { Text } from '@/components/ThemedText'
 import { ThemeSelector } from '@/components/ThemeSelector'
 import { useColors } from '@/constants/Colors'
-import IconSymbol from '@/components/ui/IconSymbol'
-import { useClerk, useUser } from '@clerk/clerk-expo'
+import { useClerk } from '@clerk/clerk-expo'
 import { useRouter } from 'expo-router'
-import { useEffect, useState } from 'react'
-import {
-	Alert,
-	Image,
-	ImageSourcePropType,
-	StyleSheet,
-	TouchableOpacity,
-	View
-} from 'react-native'
+import { useState } from 'react'
+import { Alert, StyleSheet } from 'react-native'
 
 export default function SettingsScreen() {
 	const [loading, setLoading] = useState<boolean>(false)
@@ -66,6 +58,7 @@ export default function SettingsScreen() {
 	return (
 		<Div style={styles.mainContainer}>
 			<ProfileButton />
+			<Text style={{ fontSize: 25, marginTop: 15 }}>Theme</Text>
 			<ThemeSelector />
 			<Button
 				variant='filled'

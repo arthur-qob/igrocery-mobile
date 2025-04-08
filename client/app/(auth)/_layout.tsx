@@ -25,7 +25,7 @@ export default function AuthLayout() {
 	// }
 
 	if (isSignedIn) {
-		return <Redirect href={'/(main)'} />
+		return <Redirect href={'/(main)/(tabs)'} />
 	}
 
 	return (

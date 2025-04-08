@@ -38,20 +38,6 @@ export default function RootLayout() {
 				tokenCache={tokenCache}
 				publishableKey={publishableKey}>
 				<Slot />
-				{/* <Stack
-					screenOptions={{
-						headerShown: false
-					}}>
-					<Stack.Screen name='/(auth)' />
-					<Stack.Screen name='/(main)' />
-					<Stack.Screen
-						name='/users/[user]'
-						options={{
-							presentation: 'modal',
-							animation: 'slide_from_bottom'
-						}}
-					/>
-				</Stack> */}
 			</ClerkProvider>
 			<StatusBar style='auto' />
 		</ThemeProvider>

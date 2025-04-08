@@ -29,29 +29,25 @@ export const ThemeSelector = () => {
 	})
 
 	return (
-		<>
-			<Text>Theme</Text>
-			<View style={styles.themeSelectorContainer}>
-				{themes.map((theme, index) => {
-					return (
-						<View key={index}>
-							<View style={styles.panelRows}>
-								<Text>
-									{theme.charAt(0).toUpperCase() +
-										theme.slice(1)}
-								</Text>
-								<Switch
-									onValueChange={() => setThemeOpt(theme)}
-									value={themeOpt === theme}
-								/>
-							</View>
-							{theme !== themes[themes.length - 1] && (
-								<View style={styles.separator} />
-							)}
+		<View style={styles.themeSelectorContainer}>
+			{themes.map((theme, index) => {
+				return (
+					<View key={index}>
+						<View style={styles.panelRows}>
+							<Text>
+								{theme.charAt(0).toUpperCase() + theme.slice(1)}
+							</Text>
+							<Switch
+								onValueChange={() => setThemeOpt(theme)}
+								value={themeOpt === theme}
+							/>
 						</View>
-					)
-				})}
-			</View>
-		</>
+						{theme !== themes[themes.length - 1] && (
+							<View style={styles.separator} />
+						)}
+					</View>
+				)
+			})}
+		</View>
 	)
 }
