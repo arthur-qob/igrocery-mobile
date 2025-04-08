@@ -186,26 +186,15 @@ const Input: React.FC<InputProps> = ({
 					<TouchableOpacity
 						onPress={handleShowPassword}
 						style={{ width: '10%', alignItems: 'center' }}>
-						{Platform.OS === 'ios' ? (
-							<SymbolView
-								name={showPassword ? 'eye' : 'eye.slash'}
-								tintColor={
-									withErrors
-										? staticColors.danger
-										: getTextColor()
-								}
-							/>
-						) : (
-							<IconSymbol
-								name={showPassword ? 'eye' : 'eye.slash'}
-								color={
-									withErrors
-										? staticColors.danger
-										: getTextColor()
-								}
-								size={24}
-							/>
-						)}
+						<IconSymbol
+							name={showPassword ? 'eye' : 'eye.slash'}
+							color={
+								withErrors
+									? staticColors.danger
+									: getTextColor()
+							}
+							size={24}
+						/>
 					</TouchableOpacity>
 				)}
 			</View>

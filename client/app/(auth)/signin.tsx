@@ -17,59 +17,12 @@ import {
 	Alert,
 	ActivityIndicator
 } from 'react-native'
+import useStyles from './authStyles'
 
 export default function SignInScreen() {
 	const router = useRouter()
 
-	const { currentTheme } = useTheme()
-
-	const { themedColors, staticColors } = useColors()
-
-	const backgroundColor = themedColors.background as any
-
-	const styles = StyleSheet.create({
-		mainContainer: {
-			backgroundColor: 'transparent',
-			paddingTop: Platform.OS === 'ios' ? 40 : 100,
-			display: 'flex',
-			flexDirection: 'column',
-			alignItems: 'center',
-			gap: 20
-		},
-		text: {
-			color: themedColors.text
-		},
-		title: {
-			fontSize: Platform.OS === 'ios' ? 70 : 65,
-			textAlign: 'center'
-		},
-		appName: {
-			fontWeight: 'bold'
-		},
-		formContainer: {
-			backgroundColor: themedColors.panel,
-			borderWidth: 1,
-			borderColor: themedColors.panelBorder,
-			borderRadius: 10,
-			paddingVertical: 30,
-			paddingHorizontal: 20,
-			width: '100%',
-			display: 'flex',
-			flexDirection: 'column',
-			justifyContent: 'center',
-			gap: 20
-		},
-		errorsContainer: {
-			width: 'auto',
-			borderRadius: 10,
-			padding: 20,
-			backgroundColor: staticColors.danger
-		},
-		errors: {
-			fontWeight: 'semibold',
-			fontSize: 20
-		}
-	})
+	const styles = useStyles()
 
 	const nav = useNavigation()
 	const [loadingScreen, setloadingScreen] = useState(true)
@@ -248,68 +201,55 @@ export default function SignInScreen() {
 		}
 
 		return (
-			<BackgroundElement backgroundColor={backgroundColor}>
-				<BlurView
-					intensity={50}
-					experimentalBlurMethod='dimezisBlurView'
-					style={{
-						...StyleSheet.absoluteFillObject,
-						overflow: 'hidden',
-						backgroundColor: 'transparent'
-					}}>
-					<Div style={styles.mainContainer}>
-						<View style={styles.formContainer}>
-							<Input
-								placeholder='Email'
-								type='email'
-								variant='clean'
-								loading={loading}
-								onValueChange={(value) =>
-									handleInputChange(value, 'emailAddress')
-								}
-								value={userValues.emailAddress}
-							/>
+			<Div style={styles.mainContainer}>
+				<View style={styles.formContainer}>
+					<Input
+						placeholder='Email'
+						type='email'
+						variant='clean'
+						loading={loading}
+						onValueChange={(value) =>
+							handleInputChange(value, 'emailAddress')
+						}
+						value={userValues.emailAddress}
+					/>
 
-							<Input
-								placeholder='Password'
-								type='password'
-								variant='clean'
-								loading={loading}
-								onValueChange={(value) =>
-									handleInputChange(value, 'password')
-								}
-								value={userValues.password}
-							/>
+					<Input
+						placeholder='Password'
+						type='password'
+						variant='clean'
+						loading={loading}
+						onValueChange={(value) =>
+							handleInputChange(value, 'password')
+						}
+						value={userValues.password}
+					/>
 
-							<Button
-								variant='text'
-								title='Forgot your password?'
-								onPress={() => router.push('/reset-password')}
-							/>
+					<Button
+						variant='text'
+						title='Forgot your password?'
+						onPress={() => router.push('/reset-password')}
+					/>
 
-							<Button
-								variant='filled'
-								title='Sign In'
-								loading={loading}
-								onPress={handleSubmit}
-							/>
+					<Button
+						variant='filled'
+						title='Sign In'
+						loading={loading}
+						onPress={handleSubmit}
+					/>
 
-							<Button
-								variant='text'
-								title="Don't have an account? Sign Up"
-								onPress={() => router.push('/signup')}
-							/>
-						</View>
-						{Object.values(errors).some(
-							(value) => value === true
-						) && (
-							<View style={styles.errorsContainer}>
-								<Text style={styles.errors}>{errorMsg}</Text>
-							</View>
-						)}
-					</Div>
-				</BlurView>
-			</BackgroundElement>
+					<Button
+						variant='text'
+						title="Don't have an account? Sign Up"
+						onPress={() => router.push('/signup')}
+					/>
+				</View>
+				{Object.values(errors).some((value) => value === true) && (
+					<View style={styles.errorsContainer}>
+						<Text style={styles.errors}>{errorMsg}</Text>
+					</View>
+				)}
+			</Div>
 		)
 	}
 }

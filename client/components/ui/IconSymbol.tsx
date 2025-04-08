@@ -21,10 +21,11 @@ const iconsMapping: Partial<
 	house: 'home-outline',
 	'house.fill': 'home',
 	'chevron.right': 'chevron-forward',
-	'list.bullet': 'list'
+	'list.bullet': 'list',
+	'person.2.fill': 'people'
 }
 
-type IconSymbolProps = {
+export type IconSymbolProps = {
 	name: keyof typeof iconsMapping
 	size?: number
 	color?: string | null
@@ -37,7 +38,7 @@ const IconSymbol: React.FC<IconSymbolProps> = ({
 	size = 28,
 	color,
 	animationSpec,
-	type = 'monochrome'
+	type
 }) => {
 	// Remove `.fill` if it exists and fallback to the non-fill version
 	const mappedName = iconsMapping[name]

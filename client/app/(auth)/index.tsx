@@ -45,7 +45,6 @@ export default function WelcomeScreen() {
 
 	return (
 		<Div style={styles.mainContainer}>
-			{/* <BackgroundElement backgroundColor={backgroundColor}> */}
 			<Text style={[styles.title, styles.text]}>
 				Welcome to{' '}
 				<Text style={[styles.title, styles.text, styles.appName]}>
@@ -70,7 +69,6 @@ export default function WelcomeScreen() {
 					}}
 				/>
 			</View>
-			{/* </BackgroundElement> */}
 		</Div>
 	)
 }

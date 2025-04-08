@@ -412,127 +412,93 @@ export default function ResetPasswordScreen() {
 		}
 
 		return (
-			<BackgroundElement backgroundColor={backgroundColor}>
-				<BlurView
-					intensity={50}
-					experimentalBlurMethod='dimezisBlurView'
-					style={{
-						...StyleSheet.absoluteFillObject,
-						overflow: 'hidden',
-						backgroundColor: 'transparent'
-					}}>
-					<Div style={styles.mainContainer}>
-						<View style={styles.formContainer}>
-							<Text>
-								Enter the 6-digit code sent to your email{' '}
-								{values.email}
-							</Text>
-							<View
+			<Div style={styles.mainContainer}>
+				<View style={styles.formContainer}>
+					<Text>
+						Enter the 6-digit code sent to your email {values.email}
+					</Text>
+					<View
+						style={{
+							display: 'flex',
+							flexDirection: 'row',
+							justifyContent: 'space-between',
+							alignItems: 'center'
+						}}>
+						{values.verifyCode.map((_: null, index: number) => (
+							<TextInput
+								key={index}
+								ref={(el) => (inputRefs.current[index] = el)}
+								keyboardType='numeric'
+								onChangeText={(value) => {
+									setCode(value, index)
+									if (
+										value &&
+										index < values.verifyCode.length - 1
+									) {
+										inputRefs.current[index + 1]?.focus()
+									}
+								}}
+								value={values.verifyCode[index]}
 								style={{
-									display: 'flex',
-									flexDirection: 'row',
-									justifyContent: 'space-between',
-									alignItems: 'center'
-								}}>
-								{values.verifyCode.map(
-									(_: null, index: number) => (
-										<TextInput
-											key={index}
-											ref={(el) =>
-												(inputRefs.current[index] = el)
-											}
-											keyboardType='numeric'
-											onChangeText={(value) => {
-												setCode(value, index)
-												if (
-													value &&
-													index <
-														values.verifyCode
-															.length -
-															1
-												) {
-													inputRefs.current[
-														index + 1
-													]?.focus()
-												}
-											}}
-											value={values.verifyCode[index]}
-											style={{
-												...styles.codeDigits,
-												...getErrorStyles()
-											}}
-										/>
-									)
-								)}
-							</View>
-							<Text style={styles.obs}>
-								If you can't find the code in your inbox, try
-								looking in the SPAM folder.
-							</Text>
-							<Input
-								placeholder='New password'
-								type='password'
-								variant='clean'
-								loading={loading}
-								withErrors={errors.newPassword}
-								onValueChange={(value) =>
-									handleInputChange(value, 'newPassword')
-								}
-								value={values.newPassword}
+									...styles.codeDigits,
+									...getErrorStyles()
+								}}
 							/>
-							<Button
-								variant='filled'
-								title='Verify'
-								loading={loading}
-								disabled={!verifyCodeIsValid || loading}
-								onPress={handleNewPasswordSubmition}
-							/>
-						</View>
-					</Div>
-				</BlurView>
-			</BackgroundElement>
+						))}
+					</View>
+					<Text style={styles.obs}>
+						If you can't find the code in your inbox, try looking in
+						the SPAM folder.
+					</Text>
+					<Input
+						placeholder='New password'
+						type='password'
+						variant='clean'
+						loading={loading}
+						withErrors={errors.newPassword}
+						onValueChange={(value) =>
+							handleInputChange(value, 'newPassword')
+						}
+						value={values.newPassword}
+					/>
+					<Button
+						variant='filled'
+						title='Verify'
+						loading={loading}
+						disabled={!verifyCodeIsValid || loading}
+						onPress={handleNewPasswordSubmition}
+					/>
+				</View>
+			</Div>
 		)
 	}
 
 	// Default layout to be displayed in the screen
 	return (
-		<BackgroundElement backgroundColor={backgroundColor}>
-			<BlurView
-				intensity={50}
-				experimentalBlurMethod='dimezisBlurView'
-				style={{
-					...StyleSheet.absoluteFillObject,
-					overflow: 'hidden',
-					backgroundColor: 'transparent'
-				}}>
-				<Div style={styles.mainContainer}>
-					<View style={styles.formContainer}>
-						<Input
-							placeholder='Email'
-							type='email'
-							variant='clean'
-							loading={loading}
-							onValueChange={(value) =>
-								handleInputChange(value, 'email')
-							}
-							value={values.email}
-						/>
+		<Div style={styles.mainContainer}>
+			<View style={styles.formContainer}>
+				<Input
+					placeholder='Email'
+					type='email'
+					variant='clean'
+					loading={loading}
+					onValueChange={(value) => handleInputChange(value, 'email')}
+					value={values.email}
+				/>
 
-						<Button
-							variant='filled'
-							title='Submit'
-							loading={loading}
-							disabled={!emailIsValid || loading}
-							onPress={handleSubmit}
-						/>
-					</View>
-					{errorMsg !== '' && (
-						<View style={styles.errorsContainer}>
-							<Text style={styles.errors}>{errorMsg}</Text>
-						</View>
-					)}
-				</Div>
-			</BlurView>
-		</BackgroundElement>
+				<Button
+					variant='filled'
+					title='Submit'
+					loading={loading}
+					disabled={!emailIsValid || loading}
+					onPress={handleSubmit}
+				/>
+			</View>
+			{errorMsg !== '' && (
+				<View style={styles.errorsContainer}>
+					<Text style={styles.errors}>{errorMsg}</Text>
+				</View>
+			)}
+		</Div>
 	)
 }

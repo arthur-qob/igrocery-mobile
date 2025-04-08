@@ -8,7 +8,6 @@ import {
 	ScrollViewProps,
 	KeyboardAvoidingViewProps,
 	Platform,
-	PlatformColor,
 	StyleSheet,
 	View,
 	ViewStyle
@@ -30,9 +29,7 @@ const DynamicInterfaceView: React.FC<DynamicInterfaceViewProps> = ({
 	style,
 	...otherProps
 }) => {
-	const { currentTheme } = useTheme()
-
-	const { themedColors, staticColors } = useColors()
+	const { themedColors } = useColors()
 
 	const backgroundColor = themedColors.background
 
@@ -51,7 +48,7 @@ const DynamicInterfaceView: React.FC<DynamicInterfaceViewProps> = ({
 			},
 			style
 		],
-		general: [{ flex: 1, zIndex: 1, backgroundColor: 'transparent' }] // Apply flex:1 here
+		general: [{ flex: 1, zIndex: 1, backgroundColor: 'transparent' }]
 	})
 
 	const { isSignedIn } = useAuth()

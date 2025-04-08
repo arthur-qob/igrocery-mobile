@@ -1,4 +1,5 @@
-import { Colors } from '@/constants/Colors'
+import StackHeader from '@/components/ui/StackHeader'
+import { Colors, useColors } from '@/constants/Colors'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useAuth } from '@clerk/clerk-expo'
 import { BlurView } from 'expo-blur'
@@ -13,6 +14,8 @@ import {
 
 export default function AuthLayout() {
 	const { currentTheme } = useTheme()
+
+	const { themedColors } = useColors()
 
 	const { isLoaded, isSignedIn } = useAuth()
 
@@ -31,18 +34,9 @@ export default function AuthLayout() {
 	return (
 		<Stack
 			screenOptions={{
-				headerShown: false,
 				headerLargeTitle: true,
 				headerTransparent: true,
 				headerBackground: () => (
-					// <BlurView
-					// 	intensity={50}
-					// 	style={{
-					// 		...StyleSheet.absoluteFillObject,
-					// 		overflow: 'hidden',
-					// 		backgroundColor: 'transparent'
-					// 	}}
-					// />
 					<View
 						style={{
 							overflow: 'hidden',
@@ -50,24 +44,20 @@ export default function AuthLayout() {
 						}}
 					/>
 				),
+				// Platform.OS === 'ios' ? (
+				// ) : (
+				// 	<StackHeader />
+				// ),
 				headerLargeTitleShadowVisible: false,
 				headerShadowVisible: true,
 				headerLargeStyle: {
 					backgroundColor: 'transparent'
 				},
 				headerTitleStyle: {
-					color:
-						Platform.OS === 'ios'
-							? String(processColor(PlatformColor('label')))
-							: Colors[currentTheme].text
+					color: themedColors.text
 				},
 				headerBackButtonDisplayMode: 'minimal',
-				headerTintColor:
-					Platform.OS === 'ios'
-						? (processColor(
-								PlatformColor('label')
-							) as unknown as string)
-						: Colors[currentTheme].text
+				headerTintColor: themedColors.text
 			}}>
 			<Stack.Screen
 				name='index'
