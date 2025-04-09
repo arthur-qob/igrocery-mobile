@@ -1,4 +1,4 @@
-import StackHeader from '@/components/ui/StackHeader'
+import Header from '@/components/ui/Header'
 import { Colors, useColors } from '@/constants/Colors'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useAuth } from '@clerk/clerk-expo'
@@ -33,32 +33,34 @@ export default function AuthLayout() {
 
 	return (
 		<Stack
-			screenOptions={{
-				headerLargeTitle: true,
-				headerTransparent: true,
-				headerBackground: () => (
-					<View
-						style={{
-							overflow: 'hidden',
-							backgroundColor: 'transparent'
-						}}
-					/>
-				),
-				// Platform.OS === 'ios' ? (
-				// ) : (
-				// 	<StackHeader />
-				// ),
-				headerLargeTitleShadowVisible: false,
-				headerShadowVisible: true,
-				headerLargeStyle: {
-					backgroundColor: 'transparent'
-				},
-				headerTitleStyle: {
-					color: themedColors.text
-				},
-				headerBackButtonDisplayMode: 'minimal',
-				headerTintColor: themedColors.text
-			}}>
+			screenOptions={
+				Platform.OS === 'ios'
+					? {
+							headerLargeTitle: true,
+							headerTransparent: true,
+							headerBackground: () => (
+								<View
+									style={{
+										overflow: 'hidden',
+										backgroundColor: 'transparent'
+									}}
+								/>
+							),
+							headerLargeTitleShadowVisible: false,
+							headerShadowVisible: true,
+							headerLargeStyle: {
+								backgroundColor: 'transparent'
+							},
+							headerTitleStyle: {
+								color: themedColors.text
+							},
+							headerBackButtonDisplayMode: 'minimal',
+							headerTintColor: themedColors.text
+						}
+					: {
+							header: (props: any) => <Header {...props} />
+						}
+			}>
 			<Stack.Screen
 				name='index'
 				options={{

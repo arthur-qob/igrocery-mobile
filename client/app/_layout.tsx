@@ -1,12 +1,22 @@
-import { ThemeProvider } from '@/contexts/ThemeContext'
+import {
+	ThemeProvider as ThemeContext,
+	useTheme
+} from '@/contexts/ThemeContext'
+import {
+	ThemeProvider,
+	DarkTheme,
+	DefaultTheme,
+	Theme
+} from '@react-navigation/native'
 import { useFonts } from 'expo-font'
-import { Slot, Stack } from 'expo-router'
+import { Slot } from 'expo-router'
 import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect } from 'react'
 import 'react-native-reanimated'
-import { ClerkProvider } from '@clerk/clerk-expo'
+import { ClerkLoaded, ClerkProvider } from '@clerk/clerk-expo'
 import { tokenCache } from '@/cache'
+import { useColors } from '@/constants/Colors'
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync()
@@ -32,14 +42,57 @@ export default function RootLayout() {
 		throw new Error('Missing Clerk Publishable Key')
 	}
 
+	const Main = () => {
+		const { currentTheme } = useTheme()
+
+		const { themedColors, staticColors } = useColors()
+
+		const CustomDefaultTheme: Theme = {
+			...DefaultTheme,
+			colors: {
+				primary: staticColors.tintColor,
+				background: themedColors.background,
+				card: themedColors.panel,
+				text: themedColors.text,
+				border: themedColors.border,
+				notification: staticColors.danger
+			}
+		}
+
+		const CustomDarkTheme: Theme = {
+			...DarkTheme,
+			colors: {
+				primary: staticColors.tintColor,
+				background: themedColors.background,
+				card: themedColors.panel,
+				text: themedColors.text,
+				border: themedColors.border,
+				notification: staticColors.danger
+			}
+		}
+
+		return (
+			<ThemeProvider
+				value={
+					currentTheme === 'dark'
+						? CustomDarkTheme
+						: CustomDefaultTheme
+				}>
+				<Slot />
+			</ThemeProvider>
+		)
+	}
+
 	return (
-		<ThemeProvider>
+		<ThemeContext>
 			<ClerkProvider
 				tokenCache={tokenCache}
 				publishableKey={publishableKey}>
-				<Slot />
+				<ClerkLoaded>
+					<Main />
+				</ClerkLoaded>
 			</ClerkProvider>
 			<StatusBar style='auto' />
-		</ThemeProvider>
+		</ThemeContext>
 	)
 }

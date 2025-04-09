@@ -44,7 +44,7 @@ interface CustomButtonProps extends PressableProps {
 
 const CustomButton: React.FC<CustomButtonProps> = ({
 	title = '',
-	variant = 'primary',
+	variant = 'filled',
 	size = 'md',
 	width = '100%',
 	style,
@@ -65,9 +65,9 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 		CustomButtonSize,
 		{ height: number; fontSize: number; padding: number }
 	> = {
-		sm: { height: 36, fontSize: 14, padding: 12 },
+		sm: { height: 36, fontSize: 12, padding: 12 },
 		md: { height: 44, fontSize: 16, padding: 16 },
-		lg: { height: 55, fontSize: 18, padding: 20 }
+		lg: { height: 55, fontSize: 20, padding: 20 }
 	}
 
 	const getVariantStyle = () => {
@@ -162,8 +162,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 			case 'danger-outlined':
 				staticColors.danger
 			case 'text':
-				return Colors[useContrastColors ? contrastTheme : currentTheme]
-					.text
+				return staticColors.tintColor
 			case 'danger-text':
 				return staticColors.danger
 			case 'icon-button':

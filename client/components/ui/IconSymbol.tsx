@@ -21,8 +21,11 @@ const iconsMapping: Partial<
 	house: 'home-outline',
 	'house.fill': 'home',
 	'chevron.right': 'chevron-forward',
+	'chevron.down': 'chevron-down',
 	'list.bullet': 'list',
-	'person.2.fill': 'people'
+	'person.2.fill': 'people',
+	'checkmark.circle': 'checkmark-circle-outline',
+	'xmark.circle': 'close-circle-outline'
 }
 
 export type IconSymbolProps = {

@@ -9,7 +9,7 @@ import IconSymbol from '@/components/ui/IconSymbol'
 import { useColors } from '@/constants/Colors'
 import { useRouter } from 'expo-router'
 
-const TabBarHeader: React.FC<BottomTabHeaderProps> = ({ options, route }) => {
+const Header: React.FC<BottomTabHeaderProps | any> = ({ options, route }) => {
 	const { currentTheme } = useTheme()
 	const contrastTheme = currentTheme === 'light' ? 'dark' : 'light'
 
@@ -28,7 +28,8 @@ const TabBarHeader: React.FC<BottomTabHeaderProps> = ({ options, route }) => {
 			flexDirection: 'column',
 			...StyleSheet.absoluteFillObject,
 			overflow: 'hidden',
-			backgroundColor: 'transparent'
+			backgroundColor:
+				Platform.OS === 'ios' ? 'transparent' : themedColors.panel
 		},
 		headerButtons: {
 			flexDirection: 'row',
@@ -43,15 +44,15 @@ const TabBarHeader: React.FC<BottomTabHeaderProps> = ({ options, route }) => {
 		}
 	})
 
-	const tabBarHeaderBlurIntensity = Platform.OS === 'android' ? 10 : 50
+	const HeaderBlurIntensity = Platform.OS === 'android' ? 0 : 50
 	return (
 		<BlurView
 			tint={
-				Platform.OS === 'android'
-					? (`systemChromeMaterial${contrastTheme.replace(contrastTheme.charAt(0), contrastTheme.charAt(0).toUpperCase())}` as BlurTint)
-					: (`systemChromeMaterial${currentTheme.replace(currentTheme.charAt(0), currentTheme.charAt(0).toUpperCase())}` as BlurTint)
+				Platform.OS === 'ios'
+					? (`systemChromeMaterial${currentTheme.replace(currentTheme.charAt(0), currentTheme.charAt(0).toUpperCase())}` as BlurTint)
+					: undefined
 			}
-			intensity={tabBarHeaderBlurIntensity}
+			intensity={HeaderBlurIntensity}
 			experimentalBlurMethod='dimezisBlurView'
 			style={styles.tabHeader}>
 			<View style={styles.headerButtons}>
@@ -77,4 +78,4 @@ const TabBarHeader: React.FC<BottomTabHeaderProps> = ({ options, route }) => {
 	)
 }
 
-export default TabBarHeader
+export default Header

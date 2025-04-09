@@ -9,7 +9,8 @@ export const Colors = {
 		panelBorder: 'rgb(142, 142, 147)',
 		separator: 'rgb(142, 142, 147)',
 		inactiveColor: 'rgb(108, 108, 112)',
-		border: 'rgb(24, 24, 24)'
+		border: 'rgb(24, 24, 24)',
+		ghost: 'rgb(230, 230, 235)'
 	},
 	dark: {
 		text: 'rgb(255, 255, 255)',
@@ -18,7 +19,8 @@ export const Colors = {
 		panelBorder: 'rgb(72, 72, 74)',
 		separator: 'rgb(72, 72, 74)',
 		inactiveColor: 'rgb(142, 142, 147)',
-		border: 'rgb(225, 225, 225)'
+		border: 'rgb(225, 225, 225)',
+		ghost: 'rgb(35, 35, 38)'
 	},
 	backgroundElement: {
 		1: {
@@ -64,7 +66,8 @@ export const useColors = () => {
 				? Colors.light.inactiveColor
 				: Colors.dark.inactiveColor,
 		border:
-			currentTheme === 'light' ? Colors.light.border : Colors.dark.border
+			currentTheme === 'light' ? Colors.light.border : Colors.dark.border,
+		ghost: currentTheme === 'light' ? Colors.light.ghost : Colors.dark.ghost
 	}
 
 	const staticColors = {

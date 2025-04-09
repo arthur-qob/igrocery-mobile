@@ -14,10 +14,11 @@ import {
 } from 'react-native'
 import { useColors, Colors } from '@/constants/Colors'
 import IconSymbol from '@/components/ui/IconSymbol'
+import { opacity } from 'react-native-reanimated/lib/typescript/Colors'
 
 type InputType = 'text' | 'password' | 'email' | 'number'
 
-type InputVariants = 'default' | 'outlined' | 'clean'
+type InputVariants = 'default' | 'outlined' | 'clean' | 'ghost'
 
 type InputSize = 'sm' | 'md' | 'lg'
 
@@ -36,6 +37,7 @@ interface InputProps extends Omit<RNTextInputProps, 'style'> {
 	inputStyle?: TextStyle
 	containerStyle?: ViewStyle
 	useContrastColors?: boolean
+	useHighlightedPlaceholder?: boolean
 }
 
 const Input: React.FC<InputProps> = ({
@@ -53,6 +55,7 @@ const Input: React.FC<InputProps> = ({
 	value,
 	children,
 	useContrastColors = false,
+	useHighlightedPlaceholder = false,
 	...otherProps
 }) => {
 	const { currentTheme } = useTheme()
@@ -68,9 +71,9 @@ const Input: React.FC<InputProps> = ({
 		InputSize,
 		{ height?: number; fontSize: number; padding: number }
 	> = {
-		sm: { fontSize: 16, padding: 8 },
-		md: { height: 25, fontSize: 20, padding: 14 },
-		lg: { height: 55, fontSize: 32, padding: 16 }
+		sm: { fontSize: 12, padding: 8 },
+		md: { height: 25, fontSize: 16, padding: 14 },
+		lg: { height: 55, fontSize: 20, padding: 16 }
 	}
 
 	const getVariantStyle = () => {
@@ -98,6 +101,11 @@ const Input: React.FC<InputProps> = ({
 						: Colors[
 								useContrastColors ? contrastTheme : currentTheme
 							].border
+				}
+			case 'ghost':
+				return {
+					backgroundColor: themedColors.ghost,
+					borderRadius: 10
 				}
 		}
 	}
@@ -132,6 +140,12 @@ const Input: React.FC<InputProps> = ({
 	const handleShowPassword = () => {
 		setShowPassword((prev) => !prev)
 	}
+
+	const highlightedPlaceholderStyle = isFocused
+		? Platform.OS === 'ios'
+			? PlatformColor('systemGray3')
+			: 'gray'
+		: getTextColor()
 
 	return (
 		<View style={[styles.InputContainer, containerStyle]}>
@@ -168,11 +182,9 @@ const Input: React.FC<InputProps> = ({
 					placeholderTextColor={
 						withErrors
 							? staticColors.danger
-							: isFocused
-								? Platform.OS === 'ios'
-									? PlatformColor('systemGray3')
-									: 'gray'
-								: getTextColor()
+							: useHighlightedPlaceholder
+								? highlightedPlaceholderStyle
+								: undefined
 					}
 					editable={!disabled}
 					secureTextEntry={type === 'password' && !showPassword}

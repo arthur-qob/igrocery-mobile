@@ -95,6 +95,7 @@ export default function UserScreen() {
 					<IconSymbol
 						name='person.circle'
 						size={150}
+						color={themedColors.text}
 					/>
 				)}
 				<View style={styles.ImgBtnContainer}>
