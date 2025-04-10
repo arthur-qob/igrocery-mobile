@@ -82,7 +82,7 @@ export const useColors = () => {
 }
 
 // IconCircle colors
-export const backgroundColors = [
+export const colors = [
 	'#fef2f2',
 	'#fee2e2',
 	'#fecaca',

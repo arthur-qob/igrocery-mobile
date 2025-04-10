@@ -34,7 +34,7 @@ interface InputProps extends Omit<RNTextInputProps, 'style'> {
 	onValueChange?: (param?: any) => any
 	value?: string
 	children?: React.ReactNode
-	inputStyle?: TextStyle
+	inputStyle?: RNTextInputProps['style']
 	containerStyle?: ViewStyle
 	useContrastColors?: boolean
 	useHighlightedPlaceholder?: boolean
@@ -62,10 +62,6 @@ const Input: React.FC<InputProps> = ({
 	const contrastTheme = currentTheme === 'light' ? 'dark' : 'light'
 
 	const { themedColors, staticColors } = useColors()
-
-	if (Platform.OS === 'ios') {
-		var { SymbolView } = require('expo-symbols')
-	}
 
 	const sizeStyles: Record<
 		InputSize,

@@ -1,6 +1,10 @@
 import { StyleSheet, Text, View, ViewStyle } from 'react-native'
 import IconSymbol, { IconSymbolProps } from './IconSymbol'
-import { backgroundColors, emojies, useColors } from '@/constants/Colors'
+import {
+	colors as backgroundColors,
+	emojies,
+	useColors
+} from '@/constants/Colors'
 import { SymbolView } from 'expo-symbols'
 import { useMemo } from 'react'
 
