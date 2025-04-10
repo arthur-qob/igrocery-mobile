@@ -1,3 +1,4 @@
+import * as Haptics from 'expo-haptics'
 import { emojies } from '@/constants/Colors'
 import { useListCreation } from '@/contexts/ListCreationContext'
 import { useRouter } from 'expo-router'
@@ -25,7 +26,14 @@ export default function EmojiPickerScreen() {
 						justifyContent: 'center',
 						alignItems: 'center'
 					}}
-					onPress={() => handleEmojiSelect(item)}>
+					onPress={() => {
+						if (process.env.EXPO_OS === 'ios') {
+							Haptics.impactAsync(
+								Haptics.ImpactFeedbackStyle.Medium
+							)
+						}
+						handleEmojiSelect(item)
+					}}>
 					<Text style={{ fontSize: 40 }}>{item}</Text>
 				</Pressable>
 			)}

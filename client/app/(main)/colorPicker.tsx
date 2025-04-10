@@ -1,17 +1,16 @@
+import React from 'react'
+import * as Haptics from 'expo-haptics'
+import { useRouter } from 'expo-router'
+import { FlatList, Pressable, View } from 'react-native'
 import { colors } from '@/constants/Colors'
 import { useListCreation } from '@/contexts/ListCreationContext'
-import { useRouter } from 'expo-router'
-import React from 'react'
-import { FlatList, Pressable, Text, View } from 'react-native'
 
 export default function ColorPickerScreen() {
-	const { setSelectedColor } = useListCreation()
-
 	const router = useRouter()
+	const { setSelectedColor } = useListCreation()
 
 	const handleColorSelect = (color: string) => {
 		setSelectedColor(color)
-
 		router.back()
 	}
 
@@ -20,19 +19,25 @@ export default function ColorPickerScreen() {
 			data={colors}
 			renderItem={({ item }) => (
 				<Pressable
+					onPress={() => {
+						if (process.env.EXPO_OS === 'ios') {
+							Haptics.impactAsync(
+								Haptics.ImpactFeedbackStyle.Medium
+							)
+						}
+						handleColorSelect(item)
+					}}
 					style={{
 						flex: 1,
-						justifyContent: 'center',
-						alignItems: 'center'
-					}}
-					onPress={() => handleColorSelect(item)}>
+						alignItems: 'center',
+						justifyContent: 'center'
+					}}>
 					<View
 						style={{
-							width: 50,
-							aspectRatio: 1 / 1,
-							backgroundColor: item,
-							borderRadius: '100%',
-							margin: 10
+							width: 40,
+							height: 40,
+							borderRadius: 100,
+							backgroundColor: item
 						}}
 					/>
 				</Pressable>
@@ -41,7 +46,13 @@ export default function ColorPickerScreen() {
 			keyExtractor={(item) => item}
 			automaticallyAdjustContentInsets
 			contentInsetAdjustmentBehavior='automatic'
-			contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+			contentInset={{ bottom: 0 }}
+			scrollIndicatorInsets={{ bottom: 0 }}
+			contentContainerStyle={{
+				padding: 16,
+				gap: 16,
+				paddingBottom: 100
+			}}
 		/>
 	)
 }

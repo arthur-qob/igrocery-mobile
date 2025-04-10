@@ -2,10 +2,10 @@ import { Button } from '@/components/Button'
 import { Div } from '@/components/DynamicInterfaceView'
 import { Input } from '@/components/Input'
 import { Text } from '@/components/ThemedText'
-import { useColors } from '@/constants/Colors'
+import { colors, emojies, useColors } from '@/constants/Colors'
 import { useListCreation } from '@/contexts/ListCreationContext'
 import { Href, useRouter } from 'expo-router'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
 export default function CreateScreen() {
@@ -13,18 +13,15 @@ export default function CreateScreen() {
 
 	const [description, setDescription] = useState('')
 
-	const { selectedColor, selectedEmoji } = useListCreation()
-
-	const [emoji, setEmoji] = useState(selectedEmoji)
-
-	const [color, setColor] = useState(selectedColor)
+	const { selectedColor, selectedEmoji, setSelectedColor, setSelectedEmoji } =
+		useListCreation()
 
 	const styles = StyleSheet.create({
 		pickerBtns: {
 			width: 35,
 			aspectRatio: 1 / 1,
 			borderWidth: 3,
-			borderColor: color,
+			borderColor: selectedColor,
 			borderRadius: '100%',
 			justifyContent: 'center',
 			alignItems: 'center'
@@ -32,7 +29,7 @@ export default function CreateScreen() {
 		color: {
 			width: '80%',
 			aspectRatio: 1 / 1,
-			backgroundColor: color,
+			backgroundColor: selectedColor,
 			borderRadius: '100%'
 		}
 	})
@@ -42,6 +39,16 @@ export default function CreateScreen() {
 	const goTo = (screen: Href) => {
 		router.push(screen)
 	}
+
+	useEffect(() => {
+		setSelectedEmoji(emojies[Math.floor(Math.random() * emojies.length)])
+		setSelectedColor(colors[Math.floor(Math.random() * colors.length)])
+
+		return () => {
+			setSelectedEmoji('')
+			setSelectedColor('')
+		}
+	}, [])
 
 	return (
 		<Div style={{ paddingTop: 0 }}>
