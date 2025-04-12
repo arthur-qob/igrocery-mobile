@@ -48,10 +48,13 @@ export const useAddListCallback = () => {
 					}
 				])
 			})
+			return id
 		},
 		[store]
 	)
 }
+
+export const useListsIds = () => useRowIds('lists', useStoreId())
 
 export default function ListsStore() {
 	const storeId = useStoreId()
@@ -70,8 +73,8 @@ export default function ListsStore() {
 		([listId, { initialContentJson }]) => (
 			<ListStore
 				listId={listId}
-				initialContentJson={initialContentJson as string}
 				key={listId}
+				initialContentJson={initialContentJson as string}
 			/>
 		)
 	)

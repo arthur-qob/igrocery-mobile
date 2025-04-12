@@ -137,11 +137,7 @@ const Input: React.FC<InputProps> = ({
 		setShowPassword((prev) => !prev)
 	}
 
-	const highlightedPlaceholderStyle = isFocused
-		? Platform.OS === 'ios'
-			? PlatformColor('systemGray3')
-			: 'gray'
-		: getTextColor()
+	const highlightedPlaceholderStyle = isFocused ? 'gray' : getTextColor()
 
 	return (
 		<View style={[styles.InputContainer, containerStyle]}>

@@ -25,7 +25,9 @@ const iconsMapping: Partial<
 	'list.bullet': 'list',
 	'person.2.fill': 'people',
 	'checkmark.circle': 'checkmark-circle-outline',
-	'xmark.circle': 'close-circle-outline'
+	'xmark.circle': 'close-circle-outline',
+	cart: 'cart-outline',
+	'cart.fill': 'cart'
 }
 
 export type IconSymbolProps = {
