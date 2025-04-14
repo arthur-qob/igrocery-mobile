@@ -12,7 +12,7 @@ const STORE_ID_PREFIX = 'listsStore-'
 const TABLES_SCHEMA = {
 	lists: {
 		id: { type: 'string' },
-		initialContentJson: { type: 'string' }
+		valuesCopy: { type: 'string' }
 	}
 } as const
 
@@ -29,24 +29,20 @@ const useStoreId = () => STORE_ID_PREFIX + useUser()?.user?.id
 
 export const useAddListCallback = () => {
 	const store = useStore(useStoreId())
-
 	return useCallback(
-		(name: string, description: string, emoji: string, color: string) => {
+		(title: string, description: string, emoji: string, color: string) => {
 			const id = randomUUID()
 			store?.setRow('lists', id, {
 				id,
-				initialContentJson: JSON.stringify([
-					{},
-					{
-						id,
-						name,
-						description,
-						emoji,
-						color,
-						createdAt: new Date().toISOString(),
-						updatedAt: new Date().toISOString()
-					}
-				])
+				valuesCopy: JSON.stringify({
+					id,
+					title,
+					description,
+					emoji,
+					color,
+					createdAt: new Date().toISOString(),
+					updatedAt: new Date().toISOString()
+				})
 			})
 			return id
 		},
@@ -55,6 +51,9 @@ export const useAddListCallback = () => {
 }
 
 export const useListsIds = () => useRowIds('lists', useStoreId())
+
+export const useDelListCallback = (id: string) =>
+	useDelRowCallback('lists', id, useStoreId())
 
 export default function ListsStore() {
 	const storeId = useStoreId()
@@ -70,11 +69,11 @@ export default function ListsStore() {
 	const currentUserLists = useTable('lists', storeId)
 
 	return Object.entries(useTable('lists', storeId)).map(
-		([listId, { initialContentJson }]) => (
+		([listId, { valuesCopy }]) => (
 			<ListStore
 				listId={listId}
 				key={listId}
-				initialContentJson={initialContentJson as string}
+				initialContentJson={valuesCopy as string}
 			/>
 		)
 	)

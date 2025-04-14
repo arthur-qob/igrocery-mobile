@@ -17,6 +17,7 @@ import 'react-native-reanimated'
 import { ClerkLoaded, ClerkProvider } from '@clerk/clerk-expo'
 import { tokenCache } from '@/cache'
 import { useColors } from '@/constants/Colors'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync()
@@ -84,15 +85,17 @@ export default function RootLayout() {
 	}
 
 	return (
-		<ThemeContext>
-			<ClerkProvider
-				tokenCache={tokenCache}
-				publishableKey={publishableKey}>
-				<ClerkLoaded>
-					<Main />
-				</ClerkLoaded>
-			</ClerkProvider>
-			<StatusBar style='auto' />
-		</ThemeContext>
+		<GestureHandlerRootView>
+			<ThemeContext>
+				<ClerkProvider
+					tokenCache={tokenCache}
+					publishableKey={publishableKey}>
+					<ClerkLoaded>
+						<Main />
+					</ClerkLoaded>
+				</ClerkProvider>
+				<StatusBar style='auto' />
+			</ThemeContext>
+		</GestureHandlerRootView>
 	)
 }

@@ -27,7 +27,8 @@ const iconsMapping: Partial<
 	'checkmark.circle': 'checkmark-circle-outline',
 	'xmark.circle': 'close-circle-outline',
 	cart: 'cart-outline',
-	'cart.fill': 'cart'
+	'cart.fill': 'cart',
+	'trash.fill': 'trash'
 }
 
 export type IconSymbolProps = {

@@ -52,12 +52,11 @@ const IconCircle: React.FC<IconCircleProps> = ({
 
 	return (
 		<View style={styles.iconCircleView}>
-			{emoji ||
-				(!iconName && (
-					<Text style={{ fontSize: size / 1.5 }}>
-						{emoji || randomEmoji}
-					</Text>
-				))}
+			{emoji && (
+				<Text style={{ fontSize: size / 1.5 }}>
+					{emoji || randomEmoji}
+				</Text>
+			)}
 			{iconName && (
 				<IconSymbol
 					name={iconName}

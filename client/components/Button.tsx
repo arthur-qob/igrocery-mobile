@@ -9,12 +9,14 @@ import {
 	PressableProps,
 	StyleSheet,
 	TextStyle,
+	View,
 	ViewStyle
 } from 'react-native'
 import { Text } from './ThemedText'
 import { useColors, Colors } from '@/constants/Colors'
 import { SymbolView } from 'expo-symbols'
 import Ionicons from '@expo/vector-icons/Ionicons'
+import IconSymbol from './ui/IconSymbol'
 
 type CustomButtonVariants =
 	| 'filled'
@@ -29,8 +31,9 @@ type CustomButtonVariants =
 type CustomButtonSize = 'sm' | 'md' | 'lg'
 
 interface CustomButtonProps extends PressableProps {
-	title?: string
 	variant?: CustomButtonVariants
+	title?: string
+	icon?: string
 	size?: CustomButtonSize
 	width?: number | string
 	style?: ViewStyle
@@ -43,8 +46,9 @@ interface CustomButtonProps extends PressableProps {
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
-	title = '',
 	variant = 'filled',
+	icon = '',
+	title = '',
 	size = 'md',
 	width = '100%',
 	style,
@@ -166,30 +170,48 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 			case 'danger-text':
 				return staticColors.danger
 			case 'icon-button':
-				return Colors[useContrastColors ? contrastTheme : currentTheme]
-					.text
+				return staticColors.tintColor
 			case 'icon-button-outlined':
-				return Colors[useContrastColors ? contrastTheme : currentTheme]
-					.text
+				return staticColors.tintColor
 		}
 	}
 
-	return (
-		<Pressable
-			onPress={onPress}
-			disabled={disabled || loading}
-			style={StyleSheet.flatten([
-				style,
-				{
-					...getVariantStyle(),
-					height: sizeStyles[size].height,
-					paddingHorizontal: sizeStyles[size].padding,
-					opacity: disabled ? 0.5 : 1
-				}
-			])}>
-			{loading ? (
-				<ActivityIndicator color={getTextColor()} />
-			) : (
+	const buttonContent = () => {
+		if (loading) {
+			return <ActivityIndicator color={getTextColor()} />
+		} else if (variant.includes('icon')) {
+			return (
+				<View
+					style={{
+						width: '55%',
+						flexDirection: 'row',
+						justifyContent: 'center',
+						alignItems: 'center',
+						alignSelf: 'center'
+					}}>
+					<IconSymbol
+						name={icon}
+						color={getTextColor()}
+					/>
+					<Text
+						style={StyleSheet.flatten([
+							{
+								flex: 1,
+								fontSize: sizeStyles[size].fontSize,
+								color: getTextColor(),
+								textAlign: 'center',
+								margin: 0,
+								fontWeight: '700'
+							},
+							textStyle
+						])}>
+						{title}
+					</Text>
+					{children}
+				</View>
+			)
+		} else {
+			return (
 				<>
 					<Text
 						style={StyleSheet.flatten([
@@ -207,7 +229,24 @@ const CustomButton: React.FC<CustomButtonProps> = ({
 					</Text>
 					{children}
 				</>
-			)}
+			)
+		}
+	}
+
+	return (
+		<Pressable
+			onPress={onPress}
+			disabled={disabled || loading}
+			style={StyleSheet.flatten([
+				style,
+				{
+					...getVariantStyle(),
+					height: sizeStyles[size].height,
+					paddingHorizontal: sizeStyles[size].padding,
+					opacity: disabled ? 0.5 : 1
+				}
+			])}>
+			{buttonContent}
 		</Pressable>
 	)
 }

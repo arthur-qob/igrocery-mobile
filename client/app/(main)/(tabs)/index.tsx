@@ -1,5 +1,6 @@
 import { Button } from '@/components/Button'
 import { Div } from '@/components/DynamicInterfaceView'
+import ListItem from '@/components/ListItem'
 import { Text } from '@/components/ThemedText'
 import IconSymbol from '@/components/ui/IconSymbol'
 import { useListsIds } from '@/stores/persistence/ListsStore'
@@ -10,19 +11,21 @@ import { FlatList, StyleSheet, View } from 'react-native'
 export default function HomeScreen() {
 	const { user } = useUser()
 
-	const userLists = useListsIds()
+	const userListsIds = useListsIds()
+
+	console.log(`Lists IDs: ${userListsIds}`)
 
 	const router = useRouter()
 
 	const renderEmptyList = (
-		<Div>
-			<IconSymbol name='cart' />
+		<>
 			<Button
-				variant='text'
+				variant='icon-button'
 				title='Create your first list'
+				icon='cart'
 				onPress={() => router.push('/list/new/create')}
 			/>
-		</Div>
+		</>
 	)
 
 	const styles = StyleSheet.create({
@@ -35,7 +38,7 @@ export default function HomeScreen() {
 	})
 
 	return (
-		<Div>
+		<View style={{ paddingTop: 175, paddingHorizontal: 20 }}>
 			<Text style={styles.title}>
 				Welcome,{' '}
 				<Text style={[styles.title, styles.username]}>
@@ -49,24 +52,14 @@ export default function HomeScreen() {
 					marginTop: 50
 				}}>
 				<FlatList
-					contentInsetAdjustmentBehavior='automatic'
-					nestedScrollEnabled={true}
-					scrollEnabled={false}
-					data={userLists}
-					renderItem={({ item }) => (
-						<Button
-							variant='text'
-							title={item}
-							onPress={() =>
-								router.push({
-									pathname: '/list/[listId]',
-									params: { listId: item }
-								})
-							}
-						/>
+					data={userListsIds}
+					renderItem={({ item: listId }) => (
+						<ListItem listId={listId} />
 					)}
+					ListEmptyComponent={renderEmptyList}
+					contentInsetAdjustmentBehavior='automatic'
 				/>
 			</View>
-		</Div>
+		</View>
 	)
 }

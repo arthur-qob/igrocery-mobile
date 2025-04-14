@@ -1,6 +1,6 @@
 import * as UIReact from 'tinybase/ui-react/with-schemas'
 import { useCreateClientPersisterAndStart } from './useCreateClientPersisterAndStart'
-import { createMergeableStore } from 'tinybase/with-schemas'
+import { createMergeableStore, Value } from 'tinybase/with-schemas'
 import { useCreateServerSynchronizerAndStart } from '../synchronization/useServerSynchronizerAndStart'
 import { userUserIdAndNickname } from '@/hooks/useNickname'
 
@@ -8,7 +8,7 @@ const STORE_ID_PREFIX = 'listStore-'
 
 const VALUES_SCHEMA = {
 	listId: { type: 'string' },
-	name: { type: 'string' },
+	title: { type: 'string' },
 	description: { type: 'string' },
 	emoji: { type: 'string' },
 	color: { type: 'string' },
@@ -53,6 +53,37 @@ const {
 } = UIReact as UIReact.WithSchemas<Schemas>
 
 const useStoreId = (listId: string) => STORE_ID_PREFIX + listId
+
+export const useDelShoppingListProductCallback = (
+	listId: string,
+	productId: string
+) => useDelRowCallback('products', productId, useStoreId(listId))
+
+// Returns a pair of 1) a property of the shopping list, 2) a callback that
+// updates it, similar to the React useState pattern.
+export const useListValue = <ValueId extends ListValuesId>(
+	listId: string,
+	valueId: ValueId
+): [
+	Value<Schemas[1], ValueId>,
+	(value: Value<Schemas[1], ValueId>) => void
+] => [
+	useValue(valueId, useStoreId(listId)) ?? ('' as Value<Schemas[1], ValueId>),
+	useSetValueCallback(
+		valueId,
+		(value: Value<Schemas[1], ValueId>) => value,
+		[],
+		useStoreId(listId)
+	)
+]
+
+export const useListProductCount = (listId: string) =>
+	useRowCount('products', useStoreId(listId))
+
+export const useListUsersNicknames = (listId: string) =>
+	Object.entries(useTable('collaborators', useStoreId(listId))).map(
+		([, { nickname }]) => nickname
+	)
 
 // Create, persiste and synchronize a store
 export default function ListStore({
