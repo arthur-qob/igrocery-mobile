@@ -42,7 +42,6 @@ export default function HomeScreen() {
 			marginTop: 50,
 			flexDirection: 'column',
 			backgroundColor: themedColors.panel,
-			paddingVertical: 10,
 			borderRadius: 10
 		}
 	})

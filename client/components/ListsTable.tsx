@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Text } from './ThemedText'
 import {
 	useListProductCount,
-	useListUsersNicknames,
-	useListValue
+	useListUsersNicknames
 } from '@/stores/persistence/ListStore'
 import {
 	ActivityIndicator,
@@ -12,7 +11,7 @@ import {
 	View,
 	ViewStyle
 } from 'react-native'
-import { Link, useRouter } from 'expo-router'
+import { Link } from 'expo-router'
 import { useColors } from '@/constants/Colors'
 import IconCircle from './ui/IconCircle'
 import Animated, {
@@ -24,6 +23,7 @@ import Reanimated from 'react-native-reanimated'
 import { useDelListCallback } from '@/stores/persistence/ListsStore'
 import IconSymbol from './ui/IconSymbol'
 import useListContent from '@/hooks/useListContent'
+import { NicknameCircle } from './NicknameCircle'
 
 interface ListsTableProps {
 	listId: string
@@ -81,8 +81,7 @@ export const ListsTable: React.FC<ListsTableProps> = ({
 			width: '100%',
 			flexDirection: 'row',
 			alignItems: 'center',
-			gap: 8,
-			paddingHorizontal: 16
+			gap: 8
 		},
 		mainContent: {
 			width: '100%',
@@ -93,8 +92,10 @@ export const ListsTable: React.FC<ListsTableProps> = ({
 		},
 		leftContent: {
 			width: '20%',
+			flexDirection: 'row',
 			justifyContent: 'center',
 			alignItems: 'center',
+			alignSelf: 'center',
 			...leftContentStyle
 		},
 		rightContent: {
@@ -117,6 +118,10 @@ export const ListsTable: React.FC<ListsTableProps> = ({
 			backgroundColor: staticColors.danger,
 			alignItems: 'center',
 			justifyContent: 'center'
+		},
+		nicknameContainer: {
+			flexDirection: 'row',
+			marginRight: 4
 		}
 	})
 
@@ -165,11 +170,88 @@ export const ListsTable: React.FC<ListsTableProps> = ({
 											{productCount} product
 											{productCount == 1 ? '' : 's'}
 										</Text>
+										{usersNicknames.length > 1 && (
+											<View
+												style={
+													styles.nicknameContainer
+												}>
+												{usersNicknames.length === 4
+													? usersNicknames.map(
+															(
+																nickname,
+																index
+															) => (
+																<NicknameCircle
+																	key={index}
+																	nickname={
+																		nickname as string
+																	}
+																	color={
+																		color
+																	}
+																	index={
+																		index
+																	}
+																/>
+															)
+														)
+													: usersNicknames.length > 4
+														? usersNicknames
+																.slice(0, 4)
+																.map(
+																	(
+																		nickname,
+																		index
+																	) => (
+																		<NicknameCircle
+																			key={
+																				index
+																			}
+																			nickname={
+																				nickname as string
+																			}
+																			color={
+																				color
+																			}
+																			index={
+																				index
+																			}
+																			isEllipsis={
+																				index ===
+																				3
+																			}
+																		/>
+																	)
+																)
+														: usersNicknames.map(
+																(
+																	nickname,
+																	index
+																) => (
+																	<NicknameCircle
+																		key={
+																			index
+																		}
+																		nickname={
+																			nickname as string
+																		}
+																		color={
+																			color
+																		}
+																		index={
+																			index
+																		}
+																	/>
+																)
+															)}
+											</View>
+										)}
 									</View>
 									<IconSymbol
 										name='chevron.right'
 										color={themedColors.inactiveColor}
 										size={25}
+										style={{ marginRight: 16 }}
 									/>
 								</View>
 							</View>

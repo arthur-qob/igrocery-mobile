@@ -15,6 +15,7 @@ import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeabl
 import IconSymbol from './ui/IconSymbol'
 import { Text } from './ThemedText'
 import { useColors } from '@/constants/Colors'
+import { useCurrencies } from '@/contexts/CurrencyContext'
 
 export default function ListProductItem({
 	listId,
@@ -26,6 +27,10 @@ export default function ListProductItem({
 	const router = useRouter()
 
 	const [name] = useListProductCell(listId, productId, 'name')
+	const [quantity] = useListProductCell(listId, productId, 'quantity')
+	const [price] = useListProductCell(listId, productId, 'price')
+
+	const { selectedCurrency } = useCurrencies().context
 
 	const [color] = useListValue(listId, 'color')
 
@@ -80,7 +85,7 @@ export default function ListProductItem({
 		},
 		rightAction: {
 			width: 80,
-			height: 80,
+			height: '100%',
 			backgroundColor: staticColors.danger,
 			alignItems: 'center',
 			justifyContent: 'center'
@@ -143,6 +148,15 @@ export default function ListProductItem({
 						}}>
 						{name}
 					</Text>
+					<View
+						style={{
+							flexDirection: 'row',
+							justifyContent: 'center',
+							gap: 20
+						}}>
+						<Text>{`x${quantity}`}</Text>
+						<Text>{`${selectedCurrency.symbol} ${price}`}</Text>
+					</View>
 				</TouchableOpacity>
 			</View>
 		</ReanimatedSwipeable>

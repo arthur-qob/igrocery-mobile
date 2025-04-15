@@ -30,7 +30,13 @@ const useStoreId = () => STORE_ID_PREFIX + useUser()?.user?.id
 export const useAddListCallback = () => {
 	const store = useStore(useStoreId())
 	return useCallback(
-		(title: string, description: string, emoji: string, color: string) => {
+		(
+			title: string,
+			description: string,
+			totalAmount: number,
+			emoji: string,
+			color: string
+		) => {
 			const id = randomUUID()
 			store?.setRow('lists', id, {
 				id,
@@ -38,6 +44,7 @@ export const useAddListCallback = () => {
 					id,
 					title,
 					description,
+					totalAmount: 0,
 					emoji,
 					color,
 					createdAt: new Date().toISOString(),

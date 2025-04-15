@@ -12,6 +12,7 @@ const VALUES_SCHEMA = {
 	listId: { type: 'string' },
 	title: { type: 'string' },
 	description: { type: 'string' },
+	totalAmount: { type: 'number' },
 	emoji: { type: 'string' },
 	color: { type: 'string' },
 	createdAt: { type: 'string' },

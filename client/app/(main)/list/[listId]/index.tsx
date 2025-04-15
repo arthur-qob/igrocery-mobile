@@ -24,7 +24,7 @@ export default function ListScreen() {
 
 	const listProducts = useListProductIds(listId)
 
-	const listTotalAmount = useMemo(() => {
+	const handleCalculateTotalAmount = () => {
 		let total = 0
 
 		listProducts.forEach((productId) => {
@@ -33,7 +33,9 @@ export default function ListScreen() {
 		})
 
 		return total
-	}, [listProducts])
+	}
+
+	const listTotalAmount = useState<number>(handleCalculateTotalAmount())
 
 	const { selectedCurrency } = useCurrencies().context
 
@@ -74,10 +76,7 @@ export default function ListScreen() {
 									// })
 								}}
 								style={{ padding: 8 }}>
-								<IconSymbol
-									name='square.and.arrow.up'
-									color={'#007AFF'}
-								/>
+								<IconSymbol name='square.and.arrow.up' />
 							</TouchableOpacity>
 							<TouchableOpacity
 								onPress={() => {
@@ -92,10 +91,7 @@ export default function ListScreen() {
 									// })
 								}}
 								style={{ padding: 8 }}>
-								<IconSymbol
-									name='square.and.pencil'
-									color={'#007AFF'}
-								/>
+								<IconSymbol name='square.and.pencil' />
 							</TouchableOpacity>
 							<TouchableOpacity
 								onPress={() => {
@@ -107,23 +103,17 @@ export default function ListScreen() {
 									// router.push(newProductHref);
 								}}
 								style={{ paddingLeft: 8 }}>
-								<IconSymbol
-									name='plus'
-									color={'#007AFF'}
-								/>
+								<IconSymbol name='plus' />
 							</TouchableOpacity>
 						</View>
 					)
 				}}
 			/>
-			<View
-				style={{
-					marginTop: 175,
-					width: 'auto',
-					paddingHorizontal: 20
-				}}>
-				<Text type='title'>{`Total Amount: ${selectedCurrency.symbol} ${listTotalAmount}`}</Text>
-			</View>
+			{listProducts.length > 0 && (
+				<View style={{ paddingTop: 175, paddingHorizontal: 20 }}>
+					<Text type='subtitle'>{`Total Amount: ${selectedCurrency.symbol} ${listTotalAmount[0]}`}</Text>
+				</View>
+			)}
 			<Animated.FlatList
 				data={listProducts}
 				renderItem={({ item: productId }) => (
@@ -138,14 +128,16 @@ export default function ListScreen() {
 				contentInsetAdjustmentBehavior='automatic'
 				ListHeaderComponent={() =>
 					listContent.description ? (
-						<Text
-							style={{
-								paddingHorizontal: 16,
-								fontSize: 14,
-								color: 'gray'
-							}}>
-							{listContent.description}
-						</Text>
+						<>
+							<Text
+								style={{
+									paddingHorizontal: 16,
+									fontSize: 14,
+									color: 'gray'
+								}}>
+								{listContent.description}
+							</Text>
+						</>
 					) : null
 				}
 				ListEmptyComponent={() => (

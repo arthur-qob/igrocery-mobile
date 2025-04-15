@@ -1,25 +1,26 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const currencies = {
 	BRL: { name: 'Brazilian Real', symbol: 'R$' },
 	USD: { name: 'United States Dollar', symbol: '$' },
-	ARS: { name: 'Argentine Peso', symbol: '$' },
-	CLP: { name: 'Chilean Peso', symbol: '$' },
-	COP: { name: 'Colombian Peso', symbol: '$' },
-	MXN: { name: 'Mexican Peso', symbol: '$' },
-	PEN: { name: 'Peruvian Sol', symbol: 'S/' },
-	VEF: { name: 'Venezuelan Bolívar', symbol: 'Bs' },
-	BOB: { name: 'Bolivian Boliviano', symbol: 'Bs.' },
-	CVE: { name: 'Cape Verdean Escudo', symbol: '$' },
-	CRC: { name: 'Costa Rican Colón', symbol: '₡' },
-	DOP: { name: 'Dominican Peso', symbol: 'RD$' },
+	CNY: { name: 'Chinese Yuan', symbol: '¥' },
 	EUR: { name: 'Euro', symbol: '€' },
+	CHF: { name: 'Swiss Franc', symbol: 'CHF' },
 	JPY: { name: 'Japanese Yen', symbol: '¥' },
-	GBP: { name: 'British Pound Sterling', symbol: '£' },
 	AUD: { name: 'Australian Dollar', symbol: 'A$' },
 	CAD: { name: 'Canadian Dollar', symbol: 'C$' },
-	CHF: { name: 'Swiss Franc', symbol: 'CHF' },
-	CNY: { name: 'Chinese Yuan', symbol: '¥' },
+	ARS: { name: 'Argentine Peso', symbol: 'AR$' },
+	CLP: { name: 'Chilean Peso', symbol: 'CLP$' },
+	COP: { name: 'Colombian Peso', symbol: 'COP$' },
+	MXN: { name: 'Mexican Peso', symbol: 'MX$' },
+	PEN: { name: 'Peruvian Sol', symbol: 'S/' },
+	VEF: { name: 'Venezuelan Bolívar', symbol: 'Bs' },
+	BOB: { name: 'Bolivian Boliviano', symbol: 'Bs' },
+	CVE: { name: 'Cape Verdean Escudo', symbol: 'CVE$' },
+	CRC: { name: 'Costa Rican Colón', symbol: '₡' },
+	DOP: { name: 'Dominican Peso', symbol: 'RD$' },
+	GBP: { name: 'British Pound Sterling', symbol: '£' },
 	SEK: { name: 'Swedish Krona', symbol: 'kr' },
 	NZD: { name: 'New Zealand Dollar', symbol: 'NZ$' }
 }
@@ -38,6 +39,36 @@ const CurrencyContext = createContext<CurrencyContextType | undefined>(
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
 	const [selectedCurrency, setSelectedCurrency] =
 		useState<selectedCurrencyType>(currencies.USD)
+
+	useEffect(() => {
+		;(async () => {
+			try {
+				const savedCurrency =
+					await AsyncStorage.getItem('selectedCurrency')
+				if (savedCurrency) {
+					setSelectedCurrency(JSON.parse(savedCurrency))
+				}
+			} catch (error) {
+				console.error(
+					'Failed to load currency from AsyncStorage:',
+					error
+				)
+			}
+		})()
+	}, [])
+
+	useEffect(() => {
+		;(async () => {
+			try {
+				await AsyncStorage.setItem(
+					'selectedCurrency',
+					JSON.stringify(selectedCurrency)
+				)
+			} catch (error) {
+				console.error('Failed to save currency to AsyncStorage:', error)
+			}
+		})()
+	}, [selectedCurrency])
 
 	return (
 		<CurrencyContext.Provider

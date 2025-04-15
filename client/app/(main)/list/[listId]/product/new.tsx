@@ -1,6 +1,9 @@
 import { Button } from '@/components/Button'
 import { Div } from '@/components/DynamicInterfaceView'
 import { Input } from '@/components/Input'
+import { Text } from '@/components/ThemedText'
+import IconSymbol from '@/components/ui/IconSymbol'
+import { useColors } from '@/constants/Colors'
 import { useCurrencies } from '@/contexts/CurrencyContext'
 import { useAddListProductCallback } from '@/stores/persistence/ListStore'
 import {
@@ -10,6 +13,7 @@ import {
 	useRouter
 } from 'expo-router'
 import React, { useLayoutEffect, useState } from 'react'
+import { Platform, TouchableOpacity, View } from 'react-native'
 
 export default function NewItemScreen() {
 	const { listId } = useLocalSearchParams() as { listId: string }
@@ -68,35 +72,87 @@ export default function NewItemScreen() {
 
 	const { selectedCurrency } = useCurrencies().context
 
+	const { themedColors } = useColors()
+
 	return (
 		<>
 			<Div style={{ paddingTop: 20, gap: 20 }}>
 				<Input
-					variant='clean'
-					placeholder='Item name'
+					variant='outlined'
+					label='Name'
+					placeholder='Potatoes'
 					value={name}
 					onChangeText={setName}
+					autoFocus={true}
+					returnKeyType='done'
 				/>
+
 				<Input
-					variant='clean'
-					placeholder='Item quantity'
-					keyboardType='numeric'
-					value={quantity?.toString()}
-					onChangeText={(text) => setQuantity(Number(text))}
-				/>
-				<Input
-					variant='clean'
-					placeholder={`Item price (${selectedCurrency.symbol})`}
+					variant='outlined'
+					label='Price'
+					placeholder={`(${selectedCurrency.symbol})`}
 					keyboardType='numeric'
 					value={price?.toString()}
 					onChangeText={(text) => setPrice(Number(text))}
+					onSubmitEditing={handleCreateProduct}
+					returnKeyType='done'
 				/>
+				<View
+					style={{
+						flexDirection: 'row',
+						alignItems: 'center',
+						gap: 10
+					}}>
+					<Text style={{ fontSize: 20 }}>
+						x{quantity || 0} {price || 0.0}
+					</Text>
+					<View
+						style={{
+							flexDirection: 'row',
+							alignItems: 'center',
+							alignSelf: 'flex-start'
+						}}>
+						<TouchableOpacity
+							onPress={() =>
+								setQuantity(Math.max(0, quantity || 1 - 1))
+							}>
+							<IconSymbol
+								name='minus'
+								size={20}
+								color={themedColors.text}
+							/>
+						</TouchableOpacity>
+						<TouchableOpacity
+							onPress={() => setQuantity(quantity || 0 + 1)}>
+							<IconSymbol
+								name='plus'
+								size={20}
+								color={themedColors.text}
+							/>
+						</TouchableOpacity>
+					</View>
+				</View>
+
 				<Input
-					variant='clean'
-					placeholder='Item notes'
+					variant='outlined'
+					label='Notes'
+					placeholder='Potatoes are good'
+					textAlignVertical='top'
 					value={notes}
-					// onChangeText={setnotes}
+					multiline={true}
+					numberOfLines={4}
+					inputStyle={{
+						height: 100
+					}}
+					onChangeText={setNotes}
 				/>
+				{Platform.OS !== 'ios' && (
+					<Button
+						onPress={handleCreateProduct}
+						disabled={!name}>
+						Add product
+					</Button>
+				)}
 			</Div>
 		</>
 	)

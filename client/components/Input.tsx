@@ -1,47 +1,43 @@
-import { useTheme } from '@/contexts/ThemeContext'
 import React, { useState } from 'react'
 import {
-	DimensionValue,
-	Platform,
-	PlatformColor,
-	StyleSheet,
-	TextStyle,
-	ViewStyle,
-	TextInput,
+	TextInput as RNTextInput,
 	TextInputProps as RNTextInputProps,
 	View,
-	TouchableOpacity
+	ViewStyle,
+	TextStyle,
+	TouchableOpacity,
+	StyleSheet,
+	DimensionValue
 } from 'react-native'
+import { useTheme } from '@/contexts/ThemeContext'
 import { useColors, Colors } from '@/constants/Colors'
 import IconSymbol from '@/components/ui/IconSymbol'
-import { opacity } from 'react-native-reanimated/lib/typescript/Colors'
+import { Text } from './ThemedText'
 
 type InputType = 'text' | 'password' | 'email' | 'number'
-
-type InputVariants = 'default' | 'outlined' | 'clean' | 'ghost'
-
+type InputVariant = 'default' | 'filled' | 'outlined' | 'ghost' | 'clean'
 type InputSize = 'sm' | 'md' | 'lg'
 
 interface InputProps extends Omit<RNTextInputProps, 'style'> {
+	label?: string
+	error?: string
 	type?: InputType
-	variant?: InputVariants
-	placeholder?: string
+	variant?: InputVariant
 	size?: InputSize
 	width?: number | string
 	disabled?: boolean
 	loading?: boolean
-	withErrors?: boolean
-	onValueChange?: (param?: any) => any
+	onValueChange?: (val: string) => void
 	value?: string
-	children?: React.ReactNode
-	inputStyle?: RNTextInputProps['style']
+	inputStyle?: TextStyle
 	containerStyle?: ViewStyle
 	useContrastColors?: boolean
 	useHighlightedPlaceholder?: boolean
 }
 
-const Input: React.FC<InputProps> = ({
-	placeholder,
+export const Input: React.FC<InputProps> = ({
+	label,
+	error,
 	type = 'text',
 	variant = 'default',
 	size = 'md',
@@ -50,160 +46,150 @@ const Input: React.FC<InputProps> = ({
 	containerStyle,
 	disabled = false,
 	loading = false,
-	withErrors,
 	onValueChange,
 	value,
-	children,
 	useContrastColors = false,
 	useHighlightedPlaceholder = false,
-	...otherProps
+	...props
 }) => {
 	const { currentTheme } = useTheme()
+	const { themedColors, staticColors } = useColors()
 	const contrastTheme = currentTheme === 'light' ? 'dark' : 'light'
 
-	const { themedColors, staticColors } = useColors()
+	const [isFocused, setIsFocused] = useState(false)
+	const [showPassword, setShowPassword] = useState(false)
 
 	const sizeStyles: Record<
 		InputSize,
 		{ height?: number; fontSize: number; padding: number }
 	> = {
-		sm: { fontSize: 12, padding: 8 },
-		md: { height: 25, fontSize: 16, padding: 14 },
+		sm: { fontSize: 14, padding: 8 },
+		md: { height: 50, fontSize: 16, padding: 14 },
 		lg: { height: 55, fontSize: 20, padding: 16 }
 	}
 
-	const getVariantStyle = () => {
+	const getVariantStyle = (): ViewStyle => {
 		switch (variant) {
-			case 'default':
-				return {
-					borderWidth: withErrors ? 2 : 1
-				}
 			case 'outlined':
 				return {
-					borderWidth: withErrors ? 2 : 1,
-					borderRadius: 10,
-					borderColor: withErrors
+					borderWidth: 1,
+					borderColor: error
 						? staticColors.danger
 						: Colors[
 								useContrastColors ? contrastTheme : currentTheme
-							].border
+							].border,
+					borderRadius: 10
 				}
 			case 'clean':
 				return {
-					backgroundColor: 'transparent',
-					borderBottomWidth: withErrors ? 2 : 1,
-					borderBottomColor: withErrors
-						? Colors.danger
+					borderBottomWidth: 1,
+					borderBottomColor: error
+						? staticColors.danger
 						: Colors[
 								useContrastColors ? contrastTheme : currentTheme
-							].border
+							].border,
+					backgroundColor: 'transparent'
 				}
 			case 'ghost':
 				return {
 					backgroundColor: themedColors.ghost,
 					borderRadius: 10
 				}
+			case 'filled':
+				return {
+					backgroundColor:
+						Colors[useContrastColors ? contrastTheme : currentTheme]
+							.background,
+					borderRadius: 10
+				}
+			default:
+				return {
+					borderWidth: 1,
+					borderColor: error
+						? staticColors.danger
+						: Colors[
+								useContrastColors ? contrastTheme : currentTheme
+							].border,
+					borderRadius: 10
+				}
 		}
 	}
 
 	const getTextColor = () => {
-		if (disabled) {
-			return themedColors.inactiveColor
-		}
-
-		return themedColors.text
-	}
-
-	const [isFocused, setIsFocused] = useState(false)
-
-	const styles = StyleSheet.create({
-		InputContainer: {
-			marginBottom: 16,
-			width: width as DimensionValue,
-			position: 'relative'
-		},
-		error: {
-			color: staticColors.danger,
-			marginTop: 4
-		},
-		disabled: {
-			opacity: 0.5
-		}
-	})
-
-	const [showPassword, setShowPassword] = useState(false)
-
-	const handleShowPassword = () => {
-		setShowPassword((prev) => !prev)
+		return disabled ? themedColors.inactiveColor : themedColors.text
 	}
 
 	const highlightedPlaceholderStyle = isFocused ? 'gray' : getTextColor()
 
 	return (
-		<View style={[styles.InputContainer, containerStyle]}>
+		<View style={[{ width: width as DimensionValue }, containerStyle]}>
+			{label && <Text style={styles.label}>{label}</Text>}
 			<View
 				style={[
 					getVariantStyle(),
 					{
 						flexDirection: 'row',
-						justifyContent: 'space-between',
-						alignItems: 'center',
-						paddingVertical: 5
+						alignItems: 'center'
 					},
 					disabled && styles.disabled
 				]}>
-				<TextInput
+				<RNTextInput
 					style={[
 						{
+							flex: 1,
 							height: sizeStyles[size].height,
 							fontSize: sizeStyles[size].fontSize,
 							padding:
 								variant === 'clean'
 									? 0
 									: sizeStyles[size].padding,
-							color: getTextColor(),
-							width: '90%'
+							color: getTextColor()
 						},
 						inputStyle
 					]}
+					value={value}
 					onChangeText={onValueChange}
 					onFocus={() => setIsFocused(true)}
 					onBlur={() => setIsFocused(false)}
-					value={value}
-					placeholder={placeholder}
 					placeholderTextColor={
-						withErrors
+						error
 							? staticColors.danger
 							: useHighlightedPlaceholder
 								? highlightedPlaceholderStyle
 								: undefined
 					}
 					editable={!disabled}
+					placeholder={props.placeholder}
 					secureTextEntry={type === 'password' && !showPassword}
-					keyboardType={
-						type === 'email' ? 'email-address' : 'default'
-					}
-					autoCapitalize={type === 'email' ? 'none' : undefined}
-					{...otherProps}
+					autoCapitalize={type === 'email' ? 'none' : 'sentences'}
+					keyboardType={type === 'number' ? 'numeric' : 'default'}
+					{...props}
 				/>
 				{type === 'password' && (
 					<TouchableOpacity
-						onPress={handleShowPassword}
-						style={{ width: '10%', alignItems: 'center' }}>
+						onPress={() => setShowPassword((prev) => !prev)}>
 						<IconSymbol
 							name={showPassword ? 'eye' : 'eye.slash'}
-							color={
-								withErrors
-									? staticColors.danger
-									: getTextColor()
-							}
-							size={24}
+							color={error ? staticColors.danger : getTextColor()}
+							size={20}
 						/>
 					</TouchableOpacity>
 				)}
 			</View>
+			{error && <Text style={styles.error}>{error}</Text>}
 		</View>
 	)
 }
 
-export { Input }
+const styles = StyleSheet.create({
+	label: {
+		marginBottom: 4
+	},
+	error: {
+		color: '#ef4444',
+		marginTop: 4
+	},
+	disabled: {
+		opacity: 0.5
+	}
+})
