@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ViewStyle } from 'react-native'
+import { StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native'
 import IconSymbol, { IconSymbolProps } from './IconSymbol'
 import {
 	colors as backgroundColors,
@@ -11,7 +11,7 @@ import { useMemo } from 'react'
 type IconCircleProps = {
 	emoji?: string
 	iconName?: string
-	style?: ViewStyle
+	style?: ViewStyle | TextStyle
 	size?: number
 	backgroundColor?: string
 }
@@ -39,21 +39,26 @@ const IconCircle: React.FC<IconCircleProps> = ({
 
 	const styles = StyleSheet.create({
 		iconCircleView: {
-			alignSelf: 'center',
 			backgroundColor: backgroundColor || randomBgColor,
 			width: size,
 			height: size,
 			borderRadius: 10,
+			alignSelf: 'center',
 			justifyContent: 'center',
 			alignItems: 'center',
-			...style
+			textAlign: 'center',
+			...(style as ViewStyle)
 		}
 	})
 
 	return (
-		<View style={styles.iconCircleView}>
+		<View style={styles.iconCircleView as ViewStyle}>
 			{emoji && (
-				<Text style={{ fontSize: size / 1.5 }}>
+				<Text
+					style={{
+						fontSize: size / 1.5,
+						...(style as TextStyle)
+					}}>
 					{emoji || randomEmoji}
 				</Text>
 			)}

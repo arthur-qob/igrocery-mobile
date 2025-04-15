@@ -1,7 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { AnimationSpec, SymbolType, SymbolView } from 'expo-symbols'
 import React from 'react'
-import { Platform } from 'react-native'
+import { Platform, StyleProp, TextStyle, ViewStyle } from 'react-native'
 import toHex from '../../scripts/toHex'
 
 const iconsMapping: Partial<
@@ -25,10 +25,12 @@ const iconsMapping: Partial<
 	'list.bullet': 'list',
 	'person.2.fill': 'people',
 	'checkmark.circle': 'checkmark-circle-outline',
+	checkmark: 'checkmark',
 	'xmark.circle': 'close-circle-outline',
 	cart: 'cart-outline',
 	'cart.fill': 'cart',
-	'trash.fill': 'trash'
+	'trash.fill': 'trash',
+	'square.and.pencil': 'create-outline'
 }
 
 export type IconSymbolProps = {
@@ -37,6 +39,7 @@ export type IconSymbolProps = {
 	color?: string | null
 	animationSpec?: AnimationSpec
 	type?: SymbolType
+	style?: StyleProp<ViewStyle | TextStyle>
 }
 
 const IconSymbol: React.FC<IconSymbolProps> = ({
@@ -44,7 +47,8 @@ const IconSymbol: React.FC<IconSymbolProps> = ({
 	size = 28,
 	color,
 	animationSpec,
-	type
+	type,
+	style
 }) => {
 	// Remove `.fill` if it exists and fallback to the non-fill version
 	const mappedName = iconsMapping[name]
@@ -55,6 +59,7 @@ const IconSymbol: React.FC<IconSymbolProps> = ({
 	return Platform.OS === 'ios' ? (
 		<SymbolView
 			name={name as import('expo-symbols').SymbolViewProps['name']}
+			style={style as ViewStyle}
 			tintColor={
 				toHex(
 					color
@@ -67,6 +72,7 @@ const IconSymbol: React.FC<IconSymbolProps> = ({
 	) : (
 		<Ionicons
 			name={mappedName}
+			style={style as TextStyle}
 			color={color as string}
 			size={size}
 		/>

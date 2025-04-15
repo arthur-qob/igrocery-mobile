@@ -1,9 +1,10 @@
 import { Button } from '@/components/Button'
+import CurrencyButton from '@/components/CurrencyButton'
 import { Div } from '@/components/DynamicInterfaceView'
 import ProfileButton from '@/components/ProfileButton'
+import SettingsButton from '@/components/SettingsButton'
 import { Text } from '@/components/ThemedText'
 import { ThemeSelector } from '@/components/ThemeSelector'
-import { useColors } from '@/constants/Colors'
 import { useClerk } from '@clerk/clerk-expo'
 import { useRouter } from 'expo-router'
 import { useState } from 'react'
@@ -40,25 +41,35 @@ export default function SettingsScreen() {
 		setLoading(false)
 	}
 
-	const { themedColors, staticColors } = useColors()
-
 	const styles = StyleSheet.create({
 		mainContainer: {
+			paddingTop: 45,
+			paddingBottom: 100,
 			flexDirection: 'column',
 			gap: 20
-		},
-		separator: {
-			width: '100%',
-			height: 1,
-			backgroundColor: themedColors.separator,
-			marginVertical: 5
 		}
 	})
 
 	return (
 		<Div style={styles.mainContainer}>
 			<ProfileButton />
-			<Text style={{ fontSize: 25, marginTop: 15 }}>Theme</Text>
+			<Text
+				type='subtitle'
+				style={{ marginTop: 15 }}>
+				Currency
+			</Text>
+			<CurrencyButton />
+			<Text
+				type='subtitle'
+				style={{ marginTop: 15 }}>
+				Language
+			</Text>
+			<SettingsButton content={<Text>Language</Text>} />
+			<Text
+				type='subtitle'
+				style={{ marginTop: 15 }}>
+				Theme
+			</Text>
 			<ThemeSelector />
 			<Button
 				variant='filled'

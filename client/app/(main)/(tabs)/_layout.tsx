@@ -2,7 +2,6 @@ import { Redirect, Stack, Tabs } from 'expo-router'
 import TabBar from '@/components/ui/TabBar'
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import { useAuth, useUser } from '@clerk/clerk-expo'
-import Header from '@/components/ui/Header'
 
 export default function MainTabsLayout() {
 	const { isSignedIn } = useAuth()
@@ -18,8 +17,9 @@ export default function MainTabsLayout() {
 		<Tabs
 			tabBar={(props: BottomTabBarProps) => <TabBar {...props} />}
 			screenOptions={{
-				header: (props: any) => <Header {...props} />,
-				headerShown: true
+				// header: (props: any) => <Header {...props} />,
+				headerShown: false,
+				animation: 'shift'
 			}}>
 			<Tabs.Screen
 				name='index'
