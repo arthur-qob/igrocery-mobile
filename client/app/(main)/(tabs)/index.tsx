@@ -41,8 +41,9 @@ export default function HomeScreen() {
 		listsContainer: {
 			marginTop: 50,
 			flexDirection: 'column',
-			backgroundColor: themedColors.panel,
-			borderRadius: 10
+			backgroundColor:
+				userListsIds.length > 1 ? themedColors.panel : 'transparent',
+			borderRadius: userListsIds.length > 1 ? 10 : 0
 		}
 	})
 
@@ -80,7 +81,6 @@ export default function HomeScreen() {
 				) : (
 					renderEmptyList
 				)}
-				{/* </View> */}
 			</Div>
 		</>
 	)

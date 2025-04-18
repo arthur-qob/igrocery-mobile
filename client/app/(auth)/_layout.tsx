@@ -23,10 +23,6 @@ export default function AuthLayout() {
 		return null
 	}
 
-	// if (isSignedIn || Platform.OS === 'android') {
-	// 	return <Redirect href={'/(main)'} />
-	// }
-
 	if (isSignedIn) {
 		return <Redirect href={'/(main)/(tabs)'} />
 	}

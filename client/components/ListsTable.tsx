@@ -22,7 +22,7 @@ import ReanimatedSwipeable from 'react-native-gesture-handler/ReanimatedSwipeabl
 import Reanimated from 'react-native-reanimated'
 import { useDelListCallback } from '@/stores/persistence/ListsStore'
 import IconSymbol from './ui/IconSymbol'
-import useListContent from '@/hooks/useListContent'
+import { useListContent } from '@/hooks/useListContent'
 import { NicknameCircle } from './NicknameCircle'
 
 interface ListsTableProps {
@@ -38,12 +38,19 @@ export const ListsTable: React.FC<ListsTableProps> = ({
 }) => {
 	const [loading, setLoading] = useState(true)
 
-	const { title, emoji, color } = useListContent(listId)
+	const { title, emoji, color } = useListContent({
+		listId: listId,
+		requiredFields: ['title', 'emoji', 'color']
+	})
 
 	useEffect(() => {
-		if (!title || !emoji || !color) return
+		console.log(
+			`\nList title: ${title}\nList emoji: ${emoji}\nList color: ${color}`
+		)
 
-		setLoading(false)
+		if (title && emoji && color) {
+			setLoading(false)
+		}
 	}, [title, emoji, color])
 
 	let productCount = useListProductCount(listId) || 0
@@ -51,8 +58,6 @@ export const ListsTable: React.FC<ListsTableProps> = ({
 	let usersNicknames = useListUsersNicknames(listId)
 
 	const deleteCallback = useDelListCallback(listId)
-
-	console.log(`\nList title: ${title}\nList emoji: ${emoji}`)
 
 	const RightAction = (
 		prog: SharedValue<number>,
@@ -103,6 +108,8 @@ export const ListsTable: React.FC<ListsTableProps> = ({
 			flex: 1,
 			paddingVertical: 20,
 			justifyContent: 'space-between',
+			borderBottomWidth: 0.5,
+			borderBottomColor: themedColors.panel,
 			...rightContentStyle
 		},
 		textContent: {

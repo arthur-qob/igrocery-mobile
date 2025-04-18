@@ -6,10 +6,11 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "server",
 	"main": "src/index.ts",
+	"workers_dev": true,
 	"compatibility_date": "2025-04-10",
 	"migrations": [
 		{
-			"new_classes": ["GroceriesDurableObject"],
+			"new_sqlite_classes": ["GroceriesDurableObject"],
 			"tag": "v1"
 		}
 		// {

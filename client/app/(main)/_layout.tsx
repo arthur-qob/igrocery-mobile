@@ -51,6 +51,7 @@ export default function MainLayout() {
 				<ListsStore />
 				<ListCreationProvider>
 					<Stack
+						initialRouteName='(tabs)'
 						screenOptions={{
 							headerLargeTitle: true,
 							headerTransparent: true,

@@ -106,8 +106,8 @@ export const useAddListProductCallback = (listId: string) => {
 				category: '',
 				notes,
 				createdBy: nickname,
-				createdAt: new Date().toISOString(),
-				updatedAt: new Date().toISOString()
+				createdAt: `${new Date().toISOString().split('T')[0]} | ${new Date().toISOString().split('T')[1]}`,
+				updatedAt: `${new Date().toISOString().split('T')[0]} | ${new Date().toISOString().split('T')[1]}`
 			})
 			return id
 		},
