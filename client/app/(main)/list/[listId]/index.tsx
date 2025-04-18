@@ -2,7 +2,7 @@ import { Div } from '@/components/DynamicInterfaceView'
 import { Text } from '@/components/ThemedText'
 import IconSymbol from '@/components/ui/IconSymbol'
 import * as Haptics from 'expo-haptics'
-import useListContent from '@/hooks/useListContent'
+import { useListContent } from '@/hooks/useListContent'
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import React, { useEffect, useMemo, useState } from 'react'
 import { TouchableOpacity, View } from 'react-native'
@@ -20,7 +20,7 @@ export default function ListScreen() {
 
 	const router = useRouter()
 
-	const listContent = useListContent(listId)
+	const listContent = useListContent({ listId: listId })
 
 	const listProducts = useListProductIds(listId)
 
