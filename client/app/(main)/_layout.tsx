@@ -4,15 +4,16 @@ import { CurrencyProvider } from '@/contexts/CurrencyContext'
 import { ListCreationProvider } from '@/contexts/ListCreationContext'
 import { useTheme } from '@/contexts/ThemeContext'
 import ListsStore from '@/stores/persistence/ListsStore'
-import { HeaderBackground } from '@react-navigation/elements'
+import { useAuth } from '@clerk/clerk-expo'
 import { BlurTint, BlurView } from 'expo-blur'
-import { Stack, useNavigation, useRouter, useSegments } from 'expo-router'
+import { Redirect, Stack, useRouter, useSegments } from 'expo-router'
 import { useLayoutEffect, useState } from 'react'
 import { Platform, StyleSheet, TouchableOpacity } from 'react-native'
-import { underDampedSpringCalculations } from 'react-native-reanimated/lib/typescript/animation/springUtils'
 import { Provider as TinyBaseProvider } from 'tinybase/ui-react'
 
 export default function MainLayout() {
+	const { isSignedIn } = useAuth()
+
 	const router = useRouter()
 
 	const segments = useSegments()
@@ -45,13 +46,16 @@ export default function MainLayout() {
 			? (`systemChromeMaterial${currentTheme.replace(currentTheme.charAt(0), currentTheme.charAt(0).toUpperCase())}` as BlurTint)
 			: (`systemChromeMaterial${contrastTheme.replace(contrastTheme.charAt(0), contrastTheme.charAt(0).toUpperCase())}` as BlurTint)
 
+	if (!isSignedIn) {
+		return <Redirect href={'/(auth)'} />
+	}
+
 	return (
 		<CurrencyProvider>
 			<TinyBaseProvider>
 				<ListsStore />
 				<ListCreationProvider>
 					<Stack
-						initialRouteName='(tabs)'
 						screenOptions={{
 							headerLargeTitle: true,
 							headerTransparent: true,
@@ -92,15 +96,17 @@ export default function MainLayout() {
 							name='(users)/[user]'
 							options={{
 								presentation:
-									Platform.OS === 'ios'
-										? 'formSheet'
-										: 'modal',
+									Platform.OS === 'ios' ? 'formSheet' : '',
 								animation:
 									Platform.OS === 'ios'
 										? null
 										: 'slide_from_bottom',
-								sheetAllowedDetents: [0.5, 0.75, 1],
-								sheetGrabberVisible: true,
+								sheetAllowedDetents:
+									Platform.OS === 'ios'
+										? [0.5, 0.75, 1]
+										: undefined,
+								sheetGrabberVisible:
+									Platform.OS === 'ios' ? true : undefined,
 								headerTransparent: true,
 								headerTitle: ''
 							}}
@@ -109,15 +115,15 @@ export default function MainLayout() {
 							name='list/new/index'
 							options={{
 								presentation:
-									Platform.OS === 'ios'
-										? 'formSheet'
-										: 'modal',
+									Platform.OS === 'ios' ? 'formSheet' : '',
 								animation:
 									Platform.OS === 'ios'
 										? null
 										: 'slide_from_bottom',
-								sheetAllowedDetents: [1],
-								sheetGrabberVisible: true,
+								sheetAllowedDetents:
+									Platform.OS === 'ios' ? [1] : undefined,
+								sheetGrabberVisible:
+									Platform.OS === 'ios' ? true : undefined,
 								headerTransparent: true,
 								headerTitle: ''
 							}}
@@ -148,9 +154,7 @@ export default function MainLayout() {
 							name='list/[listId]/product/new'
 							options={{
 								presentation:
-									Platform.OS === 'ios'
-										? 'formSheet'
-										: 'modal',
+									Platform.OS === 'ios' ? 'formSheet' : '',
 								animation:
 									Platform.OS === 'ios'
 										? null
@@ -158,8 +162,12 @@ export default function MainLayout() {
 								headerTransparent: false,
 								headerLargeTitle: false,
 								headerTitle: 'Add Product',
-								sheetAllowedDetents: [0.75, 1],
-								sheetGrabberVisible: true
+								sheetAllowedDetents:
+									Platform.OS === 'ios'
+										? [0.75, 1]
+										: undefined,
+								sheetGrabberVisible:
+									Platform.OS === 'ios' ? true : undefined
 							}}
 						/>
 						<Stack.Screen
@@ -167,15 +175,17 @@ export default function MainLayout() {
 							options={{
 								headerTitle: 'Choose an Emoji',
 								presentation:
-									Platform.OS === 'ios'
-										? 'formSheet'
-										: 'modal',
+									Platform.OS === 'ios' ? 'formSheet' : '',
 								animation:
 									Platform.OS === 'ios'
 										? null
 										: 'slide_from_bottom',
-								sheetAllowedDetents: [0.5, 1],
-								sheetGrabberVisible: true,
+								sheetAllowedDetents:
+									Platform.OS === 'ios'
+										? [0.5, 1]
+										: undefined,
+								sheetGrabberVisible:
+									Platform.OS === 'ios' ? true : undefined,
 								headerTransparent: true
 							}}
 						/>
@@ -184,15 +194,17 @@ export default function MainLayout() {
 							options={{
 								headerTitle: 'Choose a Color',
 								presentation:
-									Platform.OS === 'ios'
-										? 'formSheet'
-										: 'modal',
+									Platform.OS === 'ios' ? 'formSheet' : '',
 								animation:
 									Platform.OS === 'ios'
 										? null
 										: 'slide_from_bottom',
-								sheetAllowedDetents: [0.5, 1],
-								sheetGrabberVisible: true,
+								sheetAllowedDetents:
+									Platform.OS === 'ios'
+										? [0.5, 1]
+										: undefined,
+								sheetGrabberVisible:
+									Platform.OS === 'ios' ? true : undefined,
 								headerTransparent: true
 							}}
 						/>

@@ -7,9 +7,21 @@ import { useListCreation } from '@/contexts/ListCreationContext'
 import { useAddListCallback } from '@/stores/persistence/ListsStore'
 import { Href, useRouter } from 'expo-router'
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import {
+	ActivityIndicator,
+	Platform,
+	StyleSheet,
+	TouchableOpacity,
+	View
+} from 'react-native'
 
 export default function CreateScreen() {
+	const [loadingScreen, setLoadingScreen] = useState(true)
+
+	setTimeout(() => {
+		setLoadingScreen(false)
+	}, 1000)
+
 	const [listTitle, setListTitle] = useState('')
 
 	const [listDescription, setListDescription] = useState('')
@@ -51,6 +63,8 @@ export default function CreateScreen() {
 		})
 	}
 
+	const { themedColors } = useColors()
+
 	const styles = StyleSheet.create({
 		pickerBtns: {
 			width: 35,
@@ -69,8 +83,23 @@ export default function CreateScreen() {
 		}
 	})
 
-	return (
-		<Div style={{ paddingTop: 0 }}>
+	const renderLoading = loadingScreen && Platform.OS === 'android'
+
+	return renderLoading ? (
+		<View
+			style={{
+				backgroundColor: themedColors.background,
+				flex: 1,
+				justifyContent: 'center',
+				alignItems: 'center'
+			}}>
+			<ActivityIndicator
+				size='large'
+				color={themedColors.text}
+			/>
+		</View>
+	) : (
+		<Div style={{ paddingTop: Platform.OS === 'ios' ? 0 : 80 }}>
 			<View
 				style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
 				<Input

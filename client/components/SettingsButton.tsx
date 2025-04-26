@@ -46,7 +46,7 @@ const SettingsButton: React.FC<SettingsButtonProps> = ({
 			<IconSymbol
 				name='chevron.right'
 				size={20}
-				color={themedColors.inactiveColor}
+				color={themedColors.separator}
 				style={{ alignSelf: 'flex-end' }}
 			/>
 		</TouchableOpacity>

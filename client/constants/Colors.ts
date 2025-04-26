@@ -1,14 +1,13 @@
 import { useTheme } from '@/contexts/ThemeContext'
-import { Platform } from 'react-native'
 
 export const Colors = {
 	light: {
 		text: 'rgb(0, 0, 0)',
 		background: 'rgb(242, 242, 247)',
 		panel: 'rgb(255, 255, 255)',
-		panelBorder: 'rgb(142, 142, 147)',
-		separator: 'rgb(142, 142, 147)',
-		inactiveColor: 'rgb(108, 108, 112)',
+		panelBorder: 'rgb(209, 209, 214)',
+		separator: 'rgb(209, 209, 214)',
+		inactiveColor: 'rgb(175, 175, 180)',
 		border: 'rgb(24, 24, 24)',
 		ghost: 'rgb(230, 230, 235)'
 	},

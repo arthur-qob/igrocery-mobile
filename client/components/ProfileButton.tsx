@@ -111,7 +111,7 @@ const ProfileButton: React.FC = () => {
 
 		router.push({
 			pathname: '/(main)/(users)/[user]',
-			params: { userId: currentUser.id }
+			params: { user: currentUser.id }
 		})
 	}
 

@@ -157,6 +157,17 @@ export const useListProductIds = (
 		useStoreId(listId)
 	)
 
+export const useListProductData = (listId: string) => {
+	const storeId = useStoreId(listId)
+	const productsIds = useListProductIds(listId)
+	const productsTable = useTable('products', storeId)
+
+	return productsIds.map((productId) => ({
+		productId,
+		...productsTable[productId]!
+	}))
+}
+
 // Create, persiste and synchronize a store
 export default function ListStore({
 	listId,

@@ -6,7 +6,8 @@ import { useColors } from '@/constants/Colors'
 import { useListsIds } from '@/stores/persistence/ListsStore'
 import { useUser } from '@clerk/clerk-expo'
 import { useRouter } from 'expo-router'
-import { StyleSheet, View } from 'react-native'
+import { useState } from 'react'
+import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native'
 
 export default function HomeScreen() {
 	const router = useRouter()
@@ -17,6 +18,16 @@ export default function HomeScreen() {
 
 	console.log(`Lists IDs: ${userListsIds}`)
 
+	const [loadingScreen, setLoadingScreen] = useState(true)
+
+	setTimeout(() => {
+		setLoadingScreen(false)
+	}, 1000)
+
+	const { themedColors, staticColors } = useColors()
+
+	const renderLoading = loadingScreen && Platform.OS === 'android'
+
 	const renderEmptyList = (
 		<>
 			<Button
@@ -24,12 +35,20 @@ export default function HomeScreen() {
 				title='Create your first list'
 				icon='cart'
 				style={{ marginTop: 50 }}
-				onPress={() => router.push('/list/new/create')}
+				onPress={() => {
+					setTimeout(
+						() => {
+							setLoadingScreen(false)
+							router.push('/list/new/create')
+						},
+						Platform.OS === 'android' ? 1000 : 0
+					)
+
+					setLoadingScreen(true)
+				}}
 			/>
 		</>
 	)
-
-	const { themedColors } = useColors()
 
 	const styles = StyleSheet.create({
 		title: {
@@ -47,11 +66,22 @@ export default function HomeScreen() {
 		}
 	})
 
-	console.log(userListsIds.length)
-
-	return (
+	return renderLoading ? (
+		<View
+			style={{
+				backgroundColor: themedColors.background,
+				flex: 1,
+				justifyContent: 'center',
+				alignItems: 'center'
+			}}>
+			<ActivityIndicator
+				size='large'
+				color={themedColors.text}
+			/>
+		</View>
+	) : (
 		<>
-			<Div style={{ paddingTop: 50 }}>
+			<Div style={{ paddingTop: Platform.OS === 'ios' ? 50 : 100 }}>
 				<Text style={styles.title}>
 					Welcome,{' '}
 					<Text style={[styles.title, styles.username]}>
@@ -66,15 +96,12 @@ export default function HomeScreen() {
 							<ListsTable
 								key={index}
 								listId={listId}
-								rightContentStyle={
-									index > 0 && index < userListsIds.length
-										? {
-												borderTopWidth: 0.5,
-												borderTopColor:
-													themedColors.border
-											}
-										: {}
-								}
+								rightContentStyle={{
+									borderBottomColor:
+										index > 0 && index < userListsIds.length
+											? themedColors.separator
+											: 'transparent'
+								}}
 							/>
 						))}
 					</View>

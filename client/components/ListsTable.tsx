@@ -109,7 +109,6 @@ export const ListsTable: React.FC<ListsTableProps> = ({
 			paddingVertical: 20,
 			justifyContent: 'space-between',
 			borderBottomWidth: 0.5,
-			borderBottomColor: themedColors.panel,
 			...rightContentStyle
 		},
 		textContent: {
@@ -256,7 +255,7 @@ export const ListsTable: React.FC<ListsTableProps> = ({
 									</View>
 									<IconSymbol
 										name='chevron.right'
-										color={themedColors.inactiveColor}
+										color={themedColors.separator}
 										size={25}
 										style={{ marginRight: 16 }}
 									/>

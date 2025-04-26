@@ -48,7 +48,7 @@ export default function CurrencyButton() {
 			</Text>
 			<IconSymbol
 				name='chevron.right'
-				color={themedColors.inactiveColor}
+				color={themedColors.separator}
 				size={20}
 			/>
 		</TouchableOpacity>

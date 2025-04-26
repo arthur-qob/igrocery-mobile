@@ -35,8 +35,7 @@ export default function NewItemScreen() {
 	const addListProduct = useAddListProductCallback(listId)
 
 	const handleCreateProduct = () => {
-		if (Object.values(itemValues).some((value) => value === undefined))
-			return
+		if ([name, price, quantity].some((value) => value === undefined)) return
 
 		addListProduct(name, quantity, price, notes)
 
@@ -54,7 +53,7 @@ export default function NewItemScreen() {
 					variant='text'
 					title='Save'
 					onPress={handleCreateProduct}
-					disabled={Object.values(itemValues).some(
+					disabled={[name, price, quantity].some(
 						(value) => value === undefined
 					)}
 				/>
@@ -114,7 +113,7 @@ export default function NewItemScreen() {
 						}}>
 						<TouchableOpacity
 							onPress={() =>
-								setQuantity(Math.max(0, quantity || 1 - 1))
+								setQuantity((prev) => (prev ?? 0) - 1)
 							}>
 							<IconSymbol
 								name='minus'
@@ -123,7 +122,9 @@ export default function NewItemScreen() {
 							/>
 						</TouchableOpacity>
 						<TouchableOpacity
-							onPress={() => setQuantity(quantity || 0 + 1)}>
+							onPress={() =>
+								setQuantity((prev) => (prev ?? 0) + 1)
+							}>
 							<IconSymbol
 								name='plus'
 								size={20}

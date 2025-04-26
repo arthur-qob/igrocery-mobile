@@ -9,6 +9,7 @@ import { TouchableOpacity, View } from 'react-native'
 import Animated from 'react-native-reanimated'
 import {
 	useListProductCell,
+	useListProductData,
 	useListProductIds
 } from '@/stores/persistence/ListStore'
 import { Button } from '@/components/Button'
@@ -22,20 +23,14 @@ export default function ListScreen() {
 
 	const listContent = useListContent({ listId: listId })
 
-	const listProducts = useListProductIds(listId)
+	const listProducts = useListProductData(listId)
 
-	const handleCalculateTotalAmount = () => {
-		let total = 0
-
-		listProducts.forEach((productId) => {
-			const [price] = useListProductCell(listId, productId, 'price')
-			total += price
-		})
-
-		return total
-	}
-
-	const listTotalAmount = useState<number>(handleCalculateTotalAmount())
+	const listAmount = useMemo(() => {
+		return listProducts.reduce(
+			(sum, p) => sum + (p.price ?? 0) * (p.quantity ?? 0),
+			0
+		)
+	}, [listProducts])
 
 	const { selectedCurrency } = useCurrencies().context
 
@@ -100,7 +95,7 @@ export default function ListScreen() {
 											Haptics.ImpactFeedbackStyle.Medium
 										)
 									}
-									// router.push(newProductHref);
+									router.push(newProductHref)
 								}}
 								style={{ paddingLeft: 8 }}>
 								<IconSymbol name='plus' />
@@ -111,15 +106,15 @@ export default function ListScreen() {
 			/>
 			{listProducts.length > 0 && (
 				<View style={{ paddingTop: 175, paddingHorizontal: 20 }}>
-					<Text type='subtitle'>{`Total Amount: ${selectedCurrency.symbol} ${listTotalAmount[0]}`}</Text>
+					<Text type='subtitle'>{`Total Amount: ${selectedCurrency.symbol} ${listAmount}`}</Text>
 				</View>
 			)}
 			<Animated.FlatList
 				data={listProducts}
-				renderItem={({ item: productId }) => (
+				renderItem={({ item }) => (
 					<ListProductItem
 						listId={listId}
-						productId={productId}
+						productId={item.id as string}
 					/>
 				)}
 				contentContainerStyle={{

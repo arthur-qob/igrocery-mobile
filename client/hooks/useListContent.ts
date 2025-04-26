@@ -1,5 +1,4 @@
 import { useListValue } from '@/stores/persistence/ListStore'
-import React from 'react'
 
 type ListField =
 	| 'title'

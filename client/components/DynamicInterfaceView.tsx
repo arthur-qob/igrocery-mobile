@@ -41,7 +41,7 @@ const DynamicInterfaceView: React.FC<DynamicInterfaceViewProps> = ({
 			baseStyle,
 			{
 				paddingHorizontal: 20,
-				paddingTop: 150,
+				paddingTop: Platform.OS === 'ios' ? 150 : 200,
 				backgroundColor
 			},
 			style
