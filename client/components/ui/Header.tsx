@@ -53,7 +53,6 @@ const Header: React.FC<BottomTabHeaderProps | any> = ({ options, route }) => {
 					: undefined
 			}
 			intensity={HeaderBlurIntensity}
-			experimentalBlurMethod='dimezisBlurView'
 			style={styles.tabHeader}>
 			<View style={styles.headerButtons}>
 				{/* Header-Left */}

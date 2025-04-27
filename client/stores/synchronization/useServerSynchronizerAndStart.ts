@@ -1,9 +1,11 @@
 import ReconnectingWebSocket from 'reconnecting-websocket'
 import { createWsSynchronizer } from 'tinybase/synchronizers/synchronizer-ws-client/with-schemas'
-import * as UIReact from 'tinybase/ui-react/with-schemas'
+import * as UiReact from 'tinybase/ui-react/with-schemas'
 import { MergeableStore, OptionalSchemas } from 'tinybase/with-schemas'
 
 const SYNC_SERVER_URL = process.env.EXPO_PUBLIC_SYNC_SERVER_URL
+
+console.log('▶️ [Sync] Sync server URL:', SYNC_SERVER_URL)
 
 if (!SYNC_SERVER_URL) {
 	throw new Error(
@@ -17,26 +19,42 @@ export const useCreateServerSynchronizerAndStart = <
 	storeId: string,
 	store: MergeableStore<Schemas>
 ) =>
-	(UIReact as UIReact.WithSchemas<Schemas>).useCreateSynchronizer(
+	(UiReact as UiReact.WithSchemas<Schemas>).useCreateSynchronizer(
 		store,
 		async (store: MergeableStore<Schemas>) => {
-			// Create the synchronizer.
-			const synchronizer = await createWsSynchronizer(
-				store,
-				new ReconnectingWebSocket(SYNC_SERVER_URL + storeId, [], {
-					maxReconnectionDelay: 1000,
-					connectionTimeout: 1000
-				})
-			)
+			// Build full WebSocket URL
+			const url = SYNC_SERVER_URL + storeId
+			console.log('▶️ [Sync] Connecting WebSocket to', url)
 
-			// Start the synchronizer.
-			await synchronizer.startSync()
-
-			// If the websocket reconnects in the future, do another explicit sync.
-			synchronizer.getWebSocket().addEventListener('open', () => {
-				synchronizer.load().then(() => synchronizer.save())
+			// Create and instrument WebSocket
+			const ws = new ReconnectingWebSocket(url, [], {
+				maxReconnectionDelay: 1000,
+				connectionTimeout: 1000
 			})
 
+			// Initialize synchronizer
+			const synchronizer = await createWsSynchronizer(store, ws)
+
+			// Log key events
+			ws.addEventListener('open', () => {
+				console.log('🟢 [Sync] WebSocket OPEN')
+				synchronizer.load().then(() => {
+					console.log('🔄 [Sync] Loaded after WS open')
+					synchronizer.save().then(() => {
+						console.log('✅ [Sync] Saved after load')
+					})
+				})
+			})
+			ws.addEventListener('message', (e) =>
+				console.log('📨 [Sync] WS MSG', e.data)
+			)
+			ws.addEventListener('error', (err) =>
+				console.error('🔴 [Sync] WS ERR', err)
+			)
+
+			// Start the periodic sync
+			await synchronizer.startSync()
+			console.log('🔄 [Sync] Synchronizer started')
 			return synchronizer
 		},
 		[storeId]

@@ -14,7 +14,7 @@ import * as SplashScreen from 'expo-splash-screen'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect } from 'react'
 import 'react-native-reanimated'
-import { ClerkLoaded, ClerkProvider } from '@clerk/clerk-expo'
+import { ClerkLoaded, ClerkProvider, useAuth, useUser } from '@clerk/clerk-expo'
 import { tokenCache } from '@/cache'
 import { useColors } from '@/constants/Colors'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
@@ -84,6 +84,21 @@ export default function RootLayout() {
 		)
 	}
 
+	const AuthObserver = () => {
+		const { isLoaded, user } = useUser()
+		const { isLoaded: authLoaded } = useAuth()
+
+		useEffect(() => {
+			console.log('Clerk loaded:', isLoaded, 'User ID:', user?.id)
+
+			if (isLoaded && !user) {
+				console.warn('No user—force sign-in!')
+			}
+		}, [isLoaded, user])
+
+		return null
+	}
+
 	return (
 		<GestureHandlerRootView>
 			<ThemeContext>
@@ -91,6 +106,7 @@ export default function RootLayout() {
 					tokenCache={tokenCache}
 					publishableKey={publishableKey}>
 					<ClerkLoaded>
+						<AuthObserver />
 						<Main />
 					</ClerkLoaded>
 				</ClerkProvider>

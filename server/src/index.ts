@@ -15,5 +15,5 @@ export class GroceriesDurableObject extends WsServerDurableObject {
 }
 
 export default {
-	fetch: getWsServerDurableObjectFetch('GroceriesDurableObjects')
+	fetch: getWsServerDurableObjectFetch('GroceriesDurableObject')
 }

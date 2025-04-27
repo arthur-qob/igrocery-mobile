@@ -6,6 +6,7 @@ import { useCreateServerSynchronizerAndStart } from '../synchronization/useServe
 import ListStore from './ListStore'
 import { useCallback } from 'react'
 import { randomUUID } from 'expo-crypto'
+import { Platform } from 'react-native'
 
 const STORE_ID_PREFIX = 'listsStore-'
 
@@ -25,7 +26,11 @@ const {
 	useTable
 } = UIReact as UIReact.WithSchemas<[typeof TABLES_SCHEMA, NoValuesSchema]>
 
-const useStoreId = () => STORE_ID_PREFIX + useUser()?.user?.id
+const useStoreId = () => {
+	const storeId = STORE_ID_PREFIX + useUser()?.user?.id
+	console.log(`Store ID (${Platform.OS}): ${storeId}`)
+	return storeId
+}
 
 export const useAddListCallback = () => {
 	const store = useStore(useStoreId())
